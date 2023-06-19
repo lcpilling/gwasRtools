@@ -17,7 +17,7 @@
 #' @param se_col A string. Default="SE". The SE column name.
 #' @param stat_col A string. Default="NA". The test statistic column name. (Only required if not providing beta+se, or neglog10p)
 #' @param neglog10p_col A string. Default="NA". The -log10 p-value column name. (Only required if not providing beta+se, or stat)
-#' @param n_bases An interger. Default=1e6. The distance between two significant SNPs, beyond which they are defined as in separate loci.
+#' @param n_bases An interger. Default=5e5. The distance between two significant SNPs, beyond which they are defined as in separate loci.
 #' @param p_threshold A number. Default=5e-8. P-value threshold for statistical significance
 #'
 #' @examples
@@ -35,7 +35,7 @@ get_loci = function(gwas,
                     se_col        = "SE",
                     stat_col      = "NA",
                     neglog10p_col = "NA",
-                    n_bases       = 1e6,
+                    n_bases       = 5e5,
                     p_threshold   = 5e-8)  {
 
 	## in case a tibble etc is passed...

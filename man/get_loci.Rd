@@ -14,7 +14,7 @@ get_loci(
   se_col = "SE",
   stat_col = "NA",
   neglog10p_col = "NA",
-  n_bases = 1e+06,
+  n_bases = 5e+05,
   p_threshold = 5e-08
 )
 }
@@ -37,7 +37,7 @@ get_loci(
 
 \item{neglog10p_col}{A string. Default="NA". The -log10 p-value column name. (Only required if not providing beta+se, or stat)}
 
-\item{n_bases}{An interger. Default=1e6. The distance between two significant SNPs, beyond which they are defined as in separate loci.}
+\item{n_bases}{An interger. Default=5e5. The distance between two significant SNPs, beyond which they are defined as in separate loci.}
 
 \item{p_threshold}{A number. Default=5e-8. P-value threshold for statistical significance}
 }

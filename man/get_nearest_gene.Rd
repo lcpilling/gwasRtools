@@ -5,7 +5,7 @@
 \title{Get nearest gene from a set of variants}
 \usage{
 get_nearest_gene(
-  gwas,
+  variants,
   snp_col = "SNP",
   chr_col = "CHR",
   pos_col = "BP",
@@ -14,7 +14,7 @@ get_nearest_gene(
 )
 }
 \arguments{
-\item{gwas}{A data.frame. Contains the GWAS summary statistics.}
+\item{variants}{A data.frame. Contains the variants (e.g., in summary statistics).}
 
 \item{snp_col}{A string. Default="SNP". The RSID/variantID column name.}
 
@@ -33,7 +33,7 @@ Returns a data frame of variant IDs mapped to genes (with distance)
 Use distance variant position to get the nearest gene. Uses {snpsettest} function `map_snp_to_gene` to identify genes from GENCODE databases (https://github.com/HimesGroup/snpsettest).
 }
 \examples{
-get_nearest_gene(gwas)
+get_nearest_gene(variants)
 
 }
 \author{

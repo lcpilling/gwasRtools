@@ -8,7 +8,7 @@
 #'
 #' @name get_nearest_gene
 #'
-#' @param gwas A data.frame. Contains the GWAS summary statistics.
+#' @param variants A data.frame. Contains the variants (e.g., in summary statistics).
 #' @param snp_col A string. Default="SNP". The RSID/variantID column name.
 #' @param chr_col A string. Default="CHR". The chromosome column name.
 #' @param pos_col A string. Default="BP". The base pair/position column name.
@@ -16,13 +16,13 @@
 #' @param n_bases An interger. Default=1e5. The max distance in base-pairs between a variant and a gene to annotate
 #'
 #' @examples
-#' get_nearest_gene(gwas)
+#' get_nearest_gene(variants)
 #'
 #' @export
 #'
 
 # function to get nearest gene from mapped output
-get_nearest_gene = function(gwas,
+get_nearest_gene = function(variants,
                             snp_col = "SNP",
                             chr_col = "CHR",
                             pos_col = "BP",
@@ -31,21 +31,21 @@ get_nearest_gene = function(gwas,
 	
 	# check input
 	if (! build %in% c(37,38))  stop("Build has to be 37 or 38")
-	if (! snp_col %in% colnames(gwas)) stop(paste0("`snp_col` \"", snp_col, "\" not in provided data frame"))
-	if (! chr_col %in% colnames(gwas)) stop(paste0("`chr_col` \"", chr_col, "\" not in provided data frame"))
-	if (! pos_col %in% colnames(gwas)) stop(paste0("`pos_col` \"", pos_col, "\" not in provided data frame"))
+	if (! snp_col %in% colnames(variants)) stop(paste0("`snp_col` \"", snp_col, "\" not in provided data frame"))
+	if (! chr_col %in% colnames(variants)) stop(paste0("`chr_col` \"", chr_col, "\" not in provided data frame"))
+	if (! pos_col %in% colnames(variants)) stop(paste0("`pos_col` \"", pos_col, "\" not in provided data frame"))
 	
 	# get gene list
 	gene_curated = snpsettest::gene.curated.GRCh37
 	if (build == 38)  gene_curated = snpsettest::gene.curated.GRCh38
 	
 	# get SNPs actually in the genes
-	gwas_map = gwas |> dplyr::mutate(id=!! rlang::sym(snp_col), chr=!! rlang::sym(chr_col), pos=!! rlang::sym(pos_col)) |> as.data.frame()
-	gwas_mapped = snpsettest::map_snp_to_gene(gwas_map, gene_curated, extend_start=n_bases/1000, extend_end=n_bases/1000)
-	gwas_mapped = gwas_mapped$map
+	variants_map = variants |> dplyr::mutate(id=!! rlang::sym(snp_col), chr=!! rlang::sym(chr_col), pos=!! rlang::sym(pos_col)) |> as.data.frame()
+	variants_map = snpsettest::map_snp_to_gene(variants_map, gene_curated, extend_start=n_bases/1000, extend_end=n_bases/1000)
+	variants_map = variants_map$map
 	
 	# merge gene symbols to IDs
-	map = dplyr::left_join(gwas_mapped, gene_curated |> dplyr::select(gene.id, gene.name), by="gene.id")
+	map = dplyr::left_join(variants_map, gene_curated |> dplyr::select(gene.id, gene.name), by="gene.id")
 	
 	# get unique pos & distances
 	map = map |> dplyr::mutate(
@@ -99,13 +99,13 @@ get_nearest_gene = function(gwas,
 	# use `map` from {purrr} to make this quick and easy
 	map2 = purrr::map(unique(map$id), \(id) get_nearest_gene1(id, map)) |> purrr::list_rbind()
 	
-	# merge original GWAS file with genes 
-	gwas = gwas |> dplyr::mutate(ID=!! rlang::sym(snp_col))
-	gwas_genes = dplyr::left_join(gwas, map2 |> dplyr::select(id, gene, dist), by=c("ID"="id"))
-	gwas_genes = gwas_genes |> dplyr::select(-ID)
+	# merge original variants file with genes 
+	variants = variants |> dplyr::mutate(ID=!! rlang::sym(snp_col))
+	variants = dplyr::left_join(variants, map2 |> dplyr::select(id, gene, dist), by=c("ID"="id"))
+	variants = variants |> dplyr::select(-ID)
 	
 	# return 
-	return(gwas_genes)
+	return(variants)
 }
 
 
