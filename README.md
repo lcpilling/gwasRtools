@@ -40,5 +40,26 @@ get_loci(
 
 
 ## get_nearest_gene()
+Get nearest gene from a set of variants using GENCODE data. Need to provide a data.frame of variant IDs (e.g., rsids), CHR and POS. Defaults below, with example output:
 
+```r
+get_nearest_gene(
+  snps,
+  snp_col = "SNP",
+  chr_col = "CHR",
+  pos_col = "BP",
+  build   = 37,
+  n_bases = 1e5
+)
+
+# A tibble: 4 × 5
+  SNP          CHR        BP gene        dist
+  <chr>      <dbl>     <dbl> <chr>      <dbl>
+1 rs55730499     6 161005610 LPA       -53095
+3 rs814573      19  45424351 APOC1       1745
+3 rs123456      20  98765432 NA            NA
+```
+ - If `dist` is positive, the variant is intergenic, and this is the distance to the closest gene.
+ - If `dist` is negative, the variant is within a gene, and this is the distance to the start of the gene.
+ - If `dist` is NA, the variant is not within `n_bases` of a gene in GENCODE.
 
