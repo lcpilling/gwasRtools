@@ -39,6 +39,10 @@ get_nearest_gene = function(variants,
 	gene_curated = snpsettest::gene.curated.GRCh37
 	if (build == 38)  gene_curated = snpsettest::gene.curated.GRCh38
 	
+	# messages
+	cat(paste0("Using human genome build ", build, "\n"))
+	cat(paste0("Getting nearest gene for ", nrow(variants), " variants\n"))
+	
 	# get SNPs actually in the genes
 	variants_map = variants |> dplyr::mutate(id=!! rlang::sym(snp_col), chr=!! rlang::sym(chr_col), pos=!! rlang::sym(pos_col)) |> as.data.frame()
 	variants_map = snpsettest::map_snp_to_gene(variants_map, gene_curated, extend_start=n_bases/1000, extend_end=n_bases/1000)
