@@ -119,4 +119,3 @@ get_nearest_gene2 = function(variants,
 	return(variants)
 }
 
-gwas_loci2 = get_nearest_gene2(gwas_loci, snp_col="SNPID", pos_col="POS") # SAIGE
