@@ -22,7 +22,7 @@
 #'
 
 # function to get nearest gene from mapped output
-get_nearest_gene2 = function(variants,
+get_nearest_gene = function(variants,
                             snp_col = "SNP",
                             chr_col = "CHR",
                             pos_col = "BP",
