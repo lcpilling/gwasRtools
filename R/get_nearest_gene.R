@@ -22,7 +22,7 @@
 #'
 
 # function to get nearest gene from mapped output
-get_nearest_gene = function(variants,
+get_nearest_gene2 = function(variants,
                             snp_col = "SNP",
                             chr_col = "CHR",
                             pos_col = "BP",
@@ -93,7 +93,7 @@ get_nearest_gene = function(variants,
 			} else {
 			
 				# closest to start OR end
-				jj = which(map[map[,"id"]==id,"dist"] == min(map[map[,"id"]==id,"dist"]))
+				jj = which(map[map[,"id"]==id,"dist"] == min(map[map[,"id"]==id,"dist"]))[1]
 				gene = map[map[,"id"]==id,"gene.name"][ jj ]
 				dist = map[map[,"id"]==id,"dist"][ jj ]
 			
@@ -119,4 +119,4 @@ get_nearest_gene = function(variants,
 	return(variants)
 }
 
-
+gwas_loci2 = get_nearest_gene2(gwas_loci, snp_col="SNPID", pos_col="POS") # SAIGE
