@@ -65,6 +65,10 @@ get_loci = function(gwas,
 		dim(gwas_loci)
 		head(gwas_loci)
 		
+		## sort by CHR and POS
+		gwas_loci[,chr_col] = as.numeric(gwas_loci[,chr_col])
+		gwas_loci = gwas_loci[order(gwas_loci[,chr_col], gwas_loci[,pos_col]), ]
+		
 		## add empty "locus" column
 		gwas_loci[,"locus"] = NA
 		
@@ -124,7 +128,7 @@ get_loci = function(gwas,
 		for (i in unique(gwas_loci[,"locus"]))
 		{
 			## which row(s) has the lowest p-value for this locus?
-			r = which(gwas_loci[gwas_loci[,"locus"] == i,"P_neglog10"] == min(gwas_loci[gwas_loci[,"locus"] == i,"P_neglog10"]))
+			r = which(gwas_loci[gwas_loci[,"locus"] == i,"P_neglog10"] == max(gwas_loci[gwas_loci[,"locus"] == i,"P_neglog10"]))
 			#print(paste0("Locus ", i, " row(s) ", r))
 			
 			## some loci have 2 SNPs tied for significance and can have very high correlations! 
@@ -158,4 +162,5 @@ get_loci = function(gwas,
 	gwas_loci
 	
 }
+
 
