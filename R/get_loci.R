@@ -46,7 +46,7 @@ get_loci = function(gwas,
 	if (stat_col != "NA")  gwas[,"stat"] = gwas[,stat_col]
 	if (neglog10p_col == "NA" & stat_col == "NA")  {
 		gwas[,"stat"] = gwas[,beta_col] / gwas[,se_col]
-		gwas[,"P_neglog10"] = lukesRlib::get_p_neglog10( gwas[,"stat"] )
+		gwas[,"P_neglog10"] = gwasRtools:::P_neglog10( gwas[,"stat"] )
 	}
 	
 	## determine "loci" 
@@ -54,12 +54,19 @@ get_loci = function(gwas,
 	n_loci = 0
 	
 	## determine threshold in -log10 
-	p_threshold_neglog10 = lukesRlib::get_p_neglog10(p_threshold, is_p=TRUE)
+	p_threshold_neglog10 = gwasRtools:::P_neglog10(p_threshold, is_p=TRUE)
 	
 	# are any SNPs GWAS significant? i.e., -log10 of 5e-8
 	if (any(gwas[,"P_neglog10"] > p_threshold_neglog10))
 	{
 	
+		## exclude if P_neglog10 is NA - implies problem with BETA or SE - suggest to user to provide the Z or P_neglog10 directly
+		n_na = length(which( is.na(gwas[,"P_neglog10"]) ))
+		if (n_na >= 1)  {
+			warning(paste0("!!! Warning: excluding ", n_na, " variants where P_neglog10 is NA\n!!! this suggests a problem with the BETA or SE. Suggest providing the test statistic or P_neglog10 directly"))
+			gwas = gwas[ !is.na(gwas[,"P_neglog10"]) , ]
+		}
+		
 		## creating GWAS hits file 
 		gwas_loci = gwas[ gwas[,"P_neglog10"] > p_threshold_neglog10 , ]
 		dim(gwas_loci)

@@ -47,7 +47,7 @@ get_nearest_gene = function(variants,
 		dplyr::mutate(id=!! rlang::sym(snp_col), chr=!! rlang::sym(chr_col), pos=!! rlang::sym(pos_col)) |> 
 		dplyr::select(id, chr, pos) |> 
 		as.data.frame() |> 
-		distinct()
+		dplyr::distinct()
 	cat(paste0("Getting nearest gene for ", nrow(variants_map), " unique variants\n"))
 	if (nrow(variants)>nrow(variants_map))  cat(paste0("(Removed ", nrow(variants)-nrow(variants_map), " duplicate IDs/positions)\n"))
 	
@@ -72,43 +72,8 @@ get_nearest_gene = function(variants,
 			dist_start <= 0 & dist_end >= 0 ~ 0, # in gene
 			TRUE ~ NA_real_))
 	
-	# function to get nearest gene for each unique variant in `map`
-	get_nearest_gene1 = function(id, map) {
-		
-		gene = NA 
-		dist = 0
-		
-		# any gene within distance of variant?
-		if (any(!is.na(map[map[,"id"]==id,"gene.name"])))  {
-		
-			# if variant in a gene
-			if (any( map[map[,"id"]==id,"dist"] == 0 ) ) {
-			
-				# get first gene name where variant is in the gene
-				gene = map[map[,"id"]==id,"gene.name"][ map[map[,"id"]==id,"dist"] == 0 ][1]
-				
-				# get distance to start (negative)
-				dist = map[map[,"id"]==id,"dist_start"][ map[map[,"id"]==id,"dist"] == 0 ][1]
-			
-			} else {
-			
-				# closest to start OR end
-				jj = which(map[map[,"id"]==id,"dist"] == min(map[map[,"id"]==id,"dist"]))[1]
-				gene = map[map[,"id"]==id,"gene.name"][ jj ]
-				dist = map[map[,"id"]==id,"dist"][ jj ]
-			
-			}
-		}
-		
-		if (is.na(gene)) dist = NA 
-		
-		mapped = data.frame(id, gene, dist)
-		return(mapped)
-		
-	}
-	
 	# use `map` from {purrr} to make this quick and easy
-	map2 = purrr::map(unique(map$id), \(id) get_nearest_gene1(id, map)) |> purrr::list_rbind()
+	map2 = purrr::map(unique(map$id), \(id) gwasRtools:::get_nearest_gene1(id, map)) |> purrr::list_rbind()
 	
 	# merge original variants file with genes 
 	variants = variants |> dplyr::mutate(ID=!! rlang::sym(snp_col))
@@ -117,5 +82,45 @@ get_nearest_gene = function(variants,
 	
 	# return 
 	return(variants)
+}
+
+
+
+#' Internal function to get nearest gene for each unique variant in `map`
+#' @param id Identifier for the variant
+#' @param map Modified output from snpsettest::map_snp_to_gene()
+#' @noRd
+get_nearest_gene1 = function(id, map) {
+	
+	gene = NA 
+	dist = 0
+	
+	# any gene within distance of variant?
+	if (any(!is.na(map[map[,"id"]==id,"gene.name"])))  {
+	
+		# if variant in a gene
+		if (any( map[map[,"id"]==id,"dist"] == 0 ) ) {
+		
+			# get first gene name where variant is in the gene
+			gene = map[map[,"id"]==id,"gene.name"][ map[map[,"id"]==id,"dist"] == 0 ][1]
+			
+			# get distance to start (negative)
+			dist = map[map[,"id"]==id,"dist_start"][ map[map[,"id"]==id,"dist"] == 0 ][1]
+		
+		} else {
+		
+			# closest to start OR end
+			jj = which(map[map[,"id"]==id,"dist"] == min(map[map[,"id"]==id,"dist"]))[1]
+			gene = map[map[,"id"]==id,"gene.name"][ jj ]
+			dist = map[map[,"id"]==id,"dist"][ jj ]
+		
+		}
+	}
+	
+	if (is.na(gene)) dist = NA 
+	
+	mapped = data.frame(id, gene, dist)
+	return(mapped)
+	
 }
 

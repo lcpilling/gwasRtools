@@ -32,3 +32,16 @@ lambda_gc = function(p) {
 	lambda = median(observed)/median(expected)
 	return(lambda)
 }
+
+
+#' Internal function to get -log10 p-value from test statistic
+#' @param z Test statistic 
+#' @param is_p Logistic. Default=FALSE. Is this a p-value? 
+#' @noRd
+P_neglog10 = function(z, 
+                          is_p=FALSE) {
+	if (!is.numeric(z))  stop("z needs to be numeric")
+	if (is_p)  z = abs(qnorm(z))
+	neglog10_p=-( 2 + pnorm(-abs( z ), log.p=T) ) / log(10)
+	neglog10_p
+}
