@@ -63,7 +63,7 @@ get_loci = function(gwas,
 		## exclude if P_neglog10 is NA - implies problem with BETA or SE - suggest to user to provide the Z or P_neglog10 directly
 		n_na = length(which( is.na(gwas[,"P_neglog10"]) ))
 		if (n_na >= 1)  {
-			warning(paste0("!!! Warning: excluding ", n_na, " variants where P_neglog10 is NA\n!!! this suggests a problem with the BETA or SE. Suggest providing the test statistic or P_neglog10 directly"))
+			cat(paste0("\n!!! Warning: excluding ", n_na, " variants where P_neglog10 is NA\n!!! this suggests a problem with the BETA or SE. Suggest providing the test statistic or P_neglog10 directly\n\n"))
 			gwas = gwas[ !is.na(gwas[,"P_neglog10"]) , ]
 		}
 		
@@ -165,6 +165,8 @@ get_loci = function(gwas,
 		#table(gwas_loci[,"lead"])
 	
 	}
+	
+	gwas_loci = gwas_loci |> select(-stat, -P_neglog10)
 	
 	gwas_loci
 	
