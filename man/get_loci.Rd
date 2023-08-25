@@ -15,7 +15,12 @@ get_loci(
   stat_col = "NA",
   neglog10p_col = "NA",
   n_bases = 5e+05,
-  p_threshold = 5e-08
+  p_threshold = 5e-08,
+  get_ld_indep = FALSE,
+  ld_pruning_r2 = 0.001,
+  ld_clump_local = TRUE,
+  ld_plink_bin = "plink",
+  ld_bfile = "/indy/data/ld/1kg_v3/EUR"
 )
 }
 \arguments{
@@ -40,6 +45,16 @@ get_loci(
 \item{n_bases}{An interger. Default=5e5. The distance between two significant SNPs, beyond which they are defined as in separate loci.}
 
 \item{p_threshold}{A number. Default=5e-8. P-value threshold for statistical significance}
+
+\item{get_ld_indep}{Logical. Default=FALSE. Use Plink LD clumping to identify independent SNPs - see ieugwasr::ld_clump() docs}
+
+\item{ld_pruning_r2}{Numeric. Default=0.001. Pruning threshold for LD.}
+
+\item{ld_clump_local}{Logical. Default=TRUE. If clumping using local installation (rather than IEU API) - see ieugwasr::ld_clump() docs}
+
+\item{ld_plink_bin}{A string. Default="plink". Path to Plink v1.90 binary}
+
+\item{ld_bfile}{A string. Default="/indy/data/ld/1kg_v3/EUR". Path to BIM/BED reference panel files}
 }
 \value{
 Returns a data frame of significant SNPs with locus annotation

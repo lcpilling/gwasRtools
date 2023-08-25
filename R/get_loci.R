@@ -19,6 +19,11 @@
 #' @param neglog10p_col A string. Default="NA". The -log10 p-value column name. (Only required if not providing beta+se, or stat)
 #' @param n_bases An interger. Default=5e5. The distance between two significant SNPs, beyond which they are defined as in separate loci.
 #' @param p_threshold A number. Default=5e-8. P-value threshold for statistical significance
+#' @param get_ld_indep Logical. Default=FALSE. Use Plink LD clumping to identify independent SNPs - see ieugwasr::ld_clump() docs
+#' @param ld_pruning_r2 Numeric. Default=0.001. Pruning threshold for LD.
+#' @param ld_clump_local Logical. Default=TRUE. If clumping using local installation (rather than IEU API) - see ieugwasr::ld_clump() docs
+#' @param ld_plink_bin A string. Default="plink". Path to Plink v1.90 binary
+#' @param ld_bfile A string. Default="/indy/data/ld/1kg_v3/EUR". Path to BIM/BED reference panel files
 #'
 #' @examples
 #' get_loci(gwas)
@@ -27,16 +32,22 @@
 #'
 
 get_loci = function(gwas,
-                    snp_col       = "SNP",
-                    chr_col       = "CHR",
-                    pos_col       = "BP",
-                    maf_col       = "MAF",
-                    beta_col      = "BETA",
-                    se_col        = "SE",
-                    stat_col      = "NA",
-                    neglog10p_col = "NA",
-                    n_bases       = 5e5,
-                    p_threshold   = 5e-8)  {
+                    snp_col         = "SNP",
+                    chr_col         = "CHR",
+                    pos_col         = "BP",
+                    maf_col         = "MAF",
+                    beta_col        = "BETA",
+                    se_col          = "SE",
+                    stat_col        = "NA",
+                    neglog10p_col   = "NA",
+                    n_bases         = 5e5,
+                    p_threshold     = 5e-8,
+                    get_ld_indep    = FALSE,
+                    ld_pruning_r2   = 0.001,
+                    ld_clump_local  = TRUE,
+                    ld_plink_bin    = "plink",
+                    ld_bfile        = "/indy/data/ld/1kg_v3/EUR"
+)  {
 
 	## in case a tibble etc is passed...
 	gwas = as.data.frame(gwas)
@@ -164,10 +175,55 @@ get_loci = function(gwas,
 		}
 		#table(gwas_loci[,"lead"])
 	
+		######################################################
+		## for each CHR indentify independent SNPs using LD clumping
+		
+		if (get_ld_indep) {
+			
+			# using the API?
+			if (! ld_clump_local)  ld_bfile = ld_plink_bin = NULL
+			
+			# messages
+			cat("** Performing LD clumping. Can take a few minutes\n")
+			if (ld_clump_local)  cat("** Local Plink installation will be called -- output appears in the terminal screen\n")
+
+			# get RSID, chr and p-value for ld_clump()
+			for_clumping = data.frame(
+				rsid = gwas_loci[,snp_col],
+				chr  = gwas_loci[,chr_col],
+				pval = 2*pnorm(-abs(gwas_loci[,beta_col]/gwas_loci[,se_col]))
+			)
+			
+			# no X or Y for clumping step
+			for_clumping = for_clumping[ for_clumping$chr %in% 1:22 , ]
+			
+			# get independent SNPs in each chromosome based on LD
+			ld_indep = NULL
+			#for(chr in unique(for_clumping[,"chr"])){
+			#	print(chr)
+				ld_indep = c(ld_indep, suppressMessages(
+					ieugwasr::ld_clump(for_clumping,#[for_clumping[,"chr"]==chr,], 
+					                   clump_kb  = n_bases/1000, 
+					                   clump_r2  = ld_pruning_r2,
+					                   plink_bin = ld_plink_bin, 
+					                   bfile     = ld_bfile)$rsid))
+			#}
+			
+			# add additional indep SNPs to loci object
+			gwas_loci[,"ld_indep"] = FALSE
+			gwas_loci[gwas_loci[,snp_col] %in% ld_indep,"ld_indep"] = TRUE
+			
+			# how many?
+			cat(paste0("N LD indep variants = ", nrow(gwas_loci[gwas_loci$ld_indep==TRUE,]), "\n"))
+			
+		}
+		
 	}
 	
-	gwas_loci = gwas_loci |> select(-stat, -P_neglog10)
+	######################################################
+	## return final object
 	
+	gwas_loci = gwas_loci |> select(-stat, -P_neglog10)
 	gwas_loci
 	
 }

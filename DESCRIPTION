@@ -8,8 +8,16 @@ Authors@R: c(person("Luke", "Pilling",
 Description: Some useful R functions for processing GWAS output. Some shamelessly borrowed from other packages and the internet generally.
 License: GPL-3
 URL: https://github.com/lukepilling/lukesRlib
-Depends: R (>= 4.1.1), tidyverse (>= 1.3.1), purrr (>= 1.0.0), rlang (>= 1.0.0), snpsettest (>= 0.1.1)
+Depends: 
+  R (>= 4.1.1)
+Imports:
+  tidyverse (>= 1.3.1),
+  purrr (>= 1.0.0),
+  rlang (>= 1.0.0),
+  snpsettest (>= 0.1.1),
+  ieugwasr (>= 0.1.5)
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.3
 BugReports: https://github.com/lukepilling/gwasRtools/issues
+
