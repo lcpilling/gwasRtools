@@ -57,9 +57,9 @@ get_loci = function(gwas,
 	gwas = as.data.frame(gwas)
 
 	## will use -log10 of the p-value in case any p-values were <5e-324 and are rounded to 0 in many software
-	if (neglog10p_col != "NA")  gwas[,"P_neglog10"] = gwas[,neglog10p_col]
-	if (stat_col != "NA")  gwas[,"stat"] = gwas[,stat_col]
-	if (neglog10p_col == "NA" & stat_col == "NA")  {
+	if (!use_pvalue & neglog10p_col != "NA")  gwas[,"P_neglog10"] = gwas[,neglog10p_col]
+	if (!use_pvalue & stat_col != "NA")  gwas[,"stat"] = gwas[,stat_col]
+	if (!use_pvalue & neglog10p_col == "NA" & stat_col == "NA")  {
 		gwas[,"stat"] = gwas[,beta_col] / gwas[,se_col]
 		gwas[,"P_neglog10"] = gwasRtools:::P_neglog10( gwas[,"stat"] )
 	}
@@ -88,14 +88,11 @@ get_loci = function(gwas,
 		dim(gwas_loci)
 		head(gwas_loci)
 		
-		## sort by CHR and POS
-		gwas_loci[,chr_col] = as.numeric(gwas_loci[,chr_col])
-		gwas_loci = gwas_loci[order(gwas_loci[,chr_col], gwas_loci[,pos_col]), ]
-		
 		## add empty "locus" column
 		gwas_loci[,"locus"] = NA
 		
 		## order by BP and CHR
+		gwas_loci[,chr_col] = as.numeric(gwas_loci[,chr_col])
 		gwas_loci = gwas_loci[ order(as.numeric(gwas_loci[,pos_col])) , ]
 		gwas_loci = gwas_loci[ order(as.numeric(gwas_loci[,chr_col])) , ]
 		
