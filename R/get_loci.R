@@ -212,10 +212,13 @@ get_loci = function(gwas,
 			
 		}
 		
-		cat(paste0("\nN variants = ", nrow(gwas)), "\n")
+		cat(paste0("\nLocus size (bases) = ", n_bases, "\n")
+		cat(paste0("P-value threshold = ", p_threshold, "\n\n")
+		
+		cat(paste0("N variants = ", nrow(gwas)), "\n")
 		cat(paste0("N variants p<threshold = ", nrow(gwas_loci)), "\n")
 		cat(paste0("N loci = ", n_loci, "\n"))
-		if (get_ld_indep) cat(paste0("N LD indep variants = ", nrow(gwas_loci[gwas_loci$ld_indep==TRUE,]), "\n"))
+		if (get_ld_indep) cat(paste0("N LD indep (R2 threshold ", ld_pruning_r2, ") variants = ", nrow(gwas_loci[gwas_loci$ld_indep==TRUE,]), "\n\n"))
 
 	}
 	
