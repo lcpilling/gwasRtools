@@ -16,7 +16,9 @@
 #' @param beta_col A string. Default="BETA". The BETA column name.
 #' @param se_col A string. Default="SE". The SE column name.
 #' @param stat_col A string. Default="NA". The test statistic column name. (Only required if not providing beta+se, or neglog10p)
+#' @param p_col A string. Default="NA". The p-value column name. (Only required if `use_pvalue==TRUE` i.e., using the provided p-value, e.g., P_BOLT_LMM)
 #' @param neglog10p_col A string. Default="NA". The -log10 p-value column name. (Only required if not providing beta+se, or stat)
+#' @param use_pvalue Logical. Default=FALSE. Use the provided p-value (in `p_col`) rather than computing from the test statistic? Useful for BOLT-LMM output
 #' @param n_bases An interger. Default=5e5. The distance between two significant SNPs, beyond which they are defined as in separate loci.
 #' @param p_threshold A number. Default=5e-8. P-value threshold for statistical significance
 #' @param get_ld_indep Logical. Default=FALSE. Use Plink LD clumping to identify independent SNPs - see ieugwasr::ld_clump() docs
@@ -39,7 +41,9 @@ get_loci = function(gwas,
                     beta_col        = "BETA",
                     se_col          = "SE",
                     stat_col        = "NA",
+                    p_col           = "NA",
                     neglog10p_col   = "NA",
+                    use_pvalue      = FALSE,
                     n_bases         = 5e5,
                     p_threshold     = 5e-8,
                     get_ld_indep    = FALSE,
@@ -59,6 +63,7 @@ get_loci = function(gwas,
 		gwas[,"stat"] = gwas[,beta_col] / gwas[,se_col]
 		gwas[,"P_neglog10"] = gwasRtools:::P_neglog10( gwas[,"stat"] )
 	}
+	if (use_pvalue) gwas[,"P_neglog10"] = gwasRtools:::P_neglog10( gwas[,"p_col"] )
 	
 	## determine "loci" 
 	gwas_loci = NULL

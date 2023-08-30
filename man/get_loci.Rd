@@ -13,7 +13,9 @@ get_loci(
   beta_col = "BETA",
   se_col = "SE",
   stat_col = "NA",
+  p_col = "NA",
   neglog10p_col = "NA",
+  use_pvalue = FALSE,
   n_bases = 5e+05,
   p_threshold = 5e-08,
   get_ld_indep = FALSE,
@@ -40,7 +42,11 @@ get_loci(
 
 \item{stat_col}{A string. Default="NA". The test statistic column name. (Only required if not providing beta+se, or neglog10p)}
 
+\item{p_col}{A string. Default="NA". The p-value column name. (Only required if `use_pvalue==TRUE` i.e., using the provided p-value, e.g., P_BOLT_LMM)}
+
 \item{neglog10p_col}{A string. Default="NA". The -log10 p-value column name. (Only required if not providing beta+se, or stat)}
+
+\item{use_pvalue}{Logical. Default=FALSE. Use the provided p-value (in `p_col`) rather than computing from the test statistic? Useful for BOLT-LMM output}
 
 \item{n_bases}{An interger. Default=5e5. The distance between two significant SNPs, beyond which they are defined as in separate loci.}
 

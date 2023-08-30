@@ -70,6 +70,45 @@ head(gwas_loci |> filter(lead==TRUE), 5)
  - Loci are numbered. Variants within a locus (i.e., significant below the `p_threshold` and less than `n_bases` from last significant variant).
  - Lead variant for each locus is highlighted where `lead==TRUE` (i.e., smallest p-value for any variant within a locus)
 
+### Use LD clumping to identify independent SNPs at the same locus 
+
+Setting option `get_ld_indep=TRUE` will use {[ieugwasr](https://github.com/MRCIEU/ieugwasr)} package `ld_clump()` function to run Plink LD clumping. 
+
+Default is to use a local Plink installation (this is faster) with EUR reference panel. But setting option `ld_clump_local` to FALSE will use the online IEU API. See the {ieugwasr} docs for details. Default R2 threshold for LD pruning is 0.001 (modify with `ld_pruning_r2` option). 
+
+```r
+get_loci(
+  gwas,
+  snp_col = "SNP",
+  chr_col = "CHR",
+  pos_col = "BP",
+  maf_col = "MAF",
+  beta_col = "BETA",
+  se_col = "SE",
+  n_bases = 5e5,
+  p_threshold = 5e-8,
+  get_ld_indep=TRUE
+)
+
+# example using BOLT-LMM output:
+gwas_loci = get_loci(gwas, maf_col="A1FREQ", get_ld_indep=TRUE)
+
+head(gwas_loci |> filter(ld_clump==TRUE), 5)
+#> # A tibble: 5 × 11
+#>   SNP           CHR        BP ALLELE1 ALLELE0 A1FREQ    BETA      SE P_BOLT_LMM locus lead  ld_indep
+#>   <chr>       <dbl>     <dbl> <chr>   <chr>    <dbl>   <dbl>   <dbl>      <dbl> <dbl> <lgl> <lgl>
+#> 1 rs333957        1 110434791 C       G       0.579   0.0432 0.00708  9.2 e- 10     1 TRUE  TRUE
+#> 2 rs182541539     2 189399724 C       T       0.993  -0.270  0.0459   1   e-  8     2 FALSE TRUE
+#> 3 rs10207004      2 190246799 C       T       0.964  -0.356  0.0182   1.20e- 88     2 FALSE TRUE
+#> 4 rs78842559      2 190396563 G       T       0.977  -0.221  0.0228   3.20e- 23     2 FALSE TRUE
+#> 5 rs4428180       3 133466374 A       G       0.851  -0.120  0.00965  7.5 e- 38     3 TRUE  TRUE
+```
+
+Where before, locus 2 would only have had one "lead" SNP (the lowest p-value) `ld_clump()` has identified multiple independent variants in the region.
+
+Note that the original `locus` and `lead` columns remain, but a new column `ld_clump` is added indicating the `ld_clump()` identified lead SNPs. Not necessarily including the original `lead` especially if not all GWAS SNPs are in the reference panel.
+
+
 ## get_nearest_gene()
 Get nearest gene from a set of variants using GENCODE data. Need to provide a data.frame of variant IDs (e.g., rsids), CHR and POS. Defaults below, with example output:
 
