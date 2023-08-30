@@ -222,7 +222,7 @@ get_loci = function(gwas,
 	######################################################
 	## return final object
 	
-	gwas_loci = gwas_loci |> select(-stat, -P_neglog10)
+	gwas_loci = gwas_loci |> dplyr::select(-stat, -P_neglog10)
 	gwas_loci
 	
 }
