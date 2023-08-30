@@ -132,10 +132,7 @@ get_loci = function(gwas,
 		#table(gwas_loci[,"locus"])
 		
 		n_loci = locus
-		cat(paste0("N variants = ", nrow(gwas)), "\n")
-		cat(paste0("N variants p<threshold = ", nrow(gwas_loci)), "\n")
-		cat(paste0("N loci = ", n_loci, "\n"))
-		
+
 		######################################################
 		## for each locus which is the "lead" SNP
 		
@@ -213,11 +210,13 @@ get_loci = function(gwas,
 			gwas_loci[,"ld_indep"] = FALSE
 			gwas_loci[gwas_loci[,snp_col] %in% ld_indep,"ld_indep"] = TRUE
 			
-			# how many?
-			cat(paste0("N LD indep variants = ", nrow(gwas_loci[gwas_loci$ld_indep==TRUE,]), "\n"))
-			
 		}
 		
+		cat(paste0("\nN variants = ", nrow(gwas)), "\n")
+		cat(paste0("N variants p<threshold = ", nrow(gwas_loci)), "\n")
+		cat(paste0("N loci = ", n_loci, "\n"))
+		if (get_ld_indep) cat(paste0("N LD indep variants = ", nrow(gwas_loci[gwas_loci$ld_indep==TRUE,]), "\n"))
+
 	}
 	
 	######################################################
