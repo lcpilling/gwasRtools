@@ -63,7 +63,7 @@ get_loci = function(gwas,
 		gwas[,"stat"] = gwas[,beta_col] / gwas[,se_col]
 		gwas[,"P_neglog10"] = gwasRtools:::P_neglog10( gwas[,"stat"] )
 	}
-	if (use_pvalue) gwas[,"P_neglog10"] = gwasRtools:::P_neglog10( gwas[,"p_col"] )
+	if (use_pvalue) gwas[,"P_neglog10"] = gwasRtools:::P_neglog10( gwas[,"p_col"], is_p=TRUE )
 	
 	## determine "loci" 
 	gwas_loci = NULL
