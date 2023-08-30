@@ -106,7 +106,7 @@ head(gwas_loci |> filter(ld_clump==TRUE), 5)
 
 Where before, locus 2 would only have had one "lead" SNP (the lowest p-value) `ld_clump()` has identified multiple independent variants in the region.
 
-Note that the original `locus` and `lead` columns remain, but a new column `ld_clump` is added indicating the `ld_clump()` identified lead SNPs. Not necessarily including the original `lead` especially if not all GWAS SNPs are in the reference panel.
+Note that the original `locus` and `lead` columns remain, but a new column `ld_indep` is added indicating the `ld_clump()` identified lead SNPs. Not necessarily including the original `lead` especially if not all GWAS SNPs are in the reference panel.
 
 
 ## get_nearest_gene()
