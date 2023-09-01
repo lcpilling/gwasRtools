@@ -136,7 +136,7 @@ get_loci = function(gwas,
 		n_loci = locus
 
 		######################################################
-		## for each locus which is the "lead" SNP
+		## for each locus which is the lead SNP, based on distance
 		
 		## create empty variable
 		gwas_loci[,"lead"] = FALSE
@@ -209,8 +209,23 @@ get_loci = function(gwas,
 				)})
 			
 			# add additional indep SNPs to loci object
-			gwas_loci[,"ld_indep"] = FALSE
-			if (! is.null(ld_indep) )  gwas_loci[gwas_loci[,snp_col] %in% ld_indep,"ld_indep"] = TRUE
+			gwas_loci[,"lead_dist"] = gwas_loci[,"lead"]
+			gwas_loci[,"lead_ld"] = FALSE
+			if (! is.null(ld_indep) )  gwas_loci[gwas_loci[,snp_col] %in% ld_indep,"lead_ld"] = TRUE
+			
+			# pick best "lead" SNP 
+			#  if locus just has 1 (from lead_dist) use that 
+			#  if LD clumping identified more that 1, use those 
+			for (locus in unique(gwas_loci[,"locus"]))  {
+				
+				# if >1 variants identified from clumping, use distance-based variant 
+				if (length(gwas_loci[ gwas_loci[,"locus"] == locus & gwas_loci[,"lead_ld"] == TRUE ,"lead_ld"]) > 1)  {
+					
+					gwas_loci[ gwas_loci[,"locus"] == locus ,"lead"] = gwas_loci[ gwas_loci[,"locus"] == locus ,"lead_ld"] 
+					
+				}
+				
+			}
 			
 		}
 		
@@ -220,7 +235,7 @@ get_loci = function(gwas,
 		cat(paste0("N variants = ", nrow(gwas), "\n"))
 		cat(paste0("N variants p<threshold = ", nrow(gwas_loci), "\n"))
 		cat(paste0("N loci = ", n_loci, "\n"))
-		if (get_ld_indep) cat(paste0("N LD indep (R2 threshold ", ld_pruning_r2, ") variants = ", nrow(gwas_loci[gwas_loci$ld_indep==TRUE,]), "\n\n"))
+		if (get_ld_indep) cat(paste0("N independent variants (LD R2 threshold ", ld_pruning_r2, ") = ", nrow(gwas_loci[gwas_loci$lead==TRUE,]), "\n\n"))
 
 	}
 	
