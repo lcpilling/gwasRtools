@@ -58,10 +58,10 @@ get_loci = function(gwas,
 
 	## will use -log10 of the p-value in case any p-values were <5e-324 and are rounded to 0 in many software
 	if (!use_pvalue & neglog10p_col != "NA")  gwas[,"P_neglog10"] = gwas[,neglog10p_col]
-	if (!use_pvalue & stat_col != "NA")  gwas[,"stat"] = gwas[,stat_col]
+	if (!use_pvalue & stat_col != "NA")  gwas[,"stat_tmp"] = gwas[,stat_col]
 	if (!use_pvalue & neglog10p_col == "NA" & stat_col == "NA")  {
-		gwas[,"stat"] = gwas[,beta_col] / gwas[,se_col]
-		gwas[,"P_neglog10"] = gwasRtools:::P_neglog10( gwas[,"stat"] )
+		gwas[,"stat_tmp"] = gwas[,beta_col] / gwas[,se_col]
+		gwas[,"P_neglog10"] = gwasRtools:::P_neglog10( gwas[,"stat_tmp"] )
 	}
 	if (use_pvalue) gwas[,"P_neglog10"] = gwasRtools:::P_neglog10( gwas[,p_col], is_p=TRUE )
 	
@@ -176,8 +176,9 @@ get_loci = function(gwas,
 	
 		######################################################
 		## for each CHR indentify independent SNPs using LD clumping
+		## only if significant in CHRs 1:22
 		
-		if (get_ld_indep) {
+		if (get_ld_indep & any(gwas_loci[,chr_col] %in% 1:22) ) {
 			
 			# using the API?
 			if (! ld_clump_local)  ld_bfile = ld_plink_bin = NULL
@@ -196,21 +197,20 @@ get_loci = function(gwas,
 			# no X or Y for clumping step
 			for_clumping = for_clumping[ for_clumping$chr %in% 1:22 , ]
 			
-			# get independent SNPs in each chromosome based on LD
+			# get independent SNPs based on LD
 			ld_indep = NULL
-			#for(chr in unique(for_clumping[,"chr"])){
-			#	print(chr)
-				ld_indep = c(ld_indep, suppressMessages(
-					ieugwasr::ld_clump(for_clumping,#[for_clumping[,"chr"]==chr,], 
+			ld_indep = try({
+				suppressMessages(
+					ieugwasr::ld_clump(for_clumping,
 					                   clump_kb  = n_bases/1000, 
 					                   clump_r2  = ld_pruning_r2,
 					                   plink_bin = ld_plink_bin, 
-					                   bfile     = ld_bfile)$rsid))
-			#}
+					                   bfile     = ld_bfile)$rsid
+				)})
 			
 			# add additional indep SNPs to loci object
 			gwas_loci[,"ld_indep"] = FALSE
-			gwas_loci[gwas_loci[,snp_col] %in% ld_indep,"ld_indep"] = TRUE
+			if (! is.null(ld_indep) )  gwas_loci[gwas_loci[,snp_col] %in% ld_indep,"ld_indep"] = TRUE
 			
 		}
 		
@@ -227,7 +227,7 @@ get_loci = function(gwas,
 	######################################################
 	## return final object
 	
-	gwas_loci = gwas_loci[, ! colnames(gwas_loci) %in% c("stat","P_neglog10") ]
+	gwas_loci = gwas_loci[, ! colnames(gwas_loci) %in% c("stat_tmp","P_neglog10") ]
 	gwas_loci
 	
 }

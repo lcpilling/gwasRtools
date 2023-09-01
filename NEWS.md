@@ -1,3 +1,7 @@
+# gwasRtools 0.1.2
+
+* Fixes for `get_loci()` niche cases
+
 # gwasRtools 0.1.1
 
 * Fix internal -log10p calculation
