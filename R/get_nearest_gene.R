@@ -47,9 +47,10 @@ get_nearest_gene = function(variants,
 		dplyr::mutate(id=!! rlang::sym(snp_col), chr=!! rlang::sym(chr_col), pos=!! rlang::sym(pos_col)) |> 
 		dplyr::select(id, chr, pos) |> 
 		as.data.frame() |> 
-		dplyr::distinct()
+		dplyr::distinct() |> 
+		na.omit()
 	cat(paste0("Getting nearest gene for ", nrow(variants_map), " unique variants\n"))
-	if (nrow(variants)>nrow(variants_map))  cat(paste0("(Removed ", nrow(variants)-nrow(variants_map), " duplicate IDs/positions)\n"))
+	if (nrow(variants)>nrow(variants_map))  cat(paste0("(Removed ", nrow(variants)-nrow(variants_map), " duplicated or missing variant IDs/positions)\n"))
 	
 	# get GENCODE genes from list of variants
 	variants_map = snpsettest::map_snp_to_gene(variants_map, gene_curated, extend_start=n_bases/1000, extend_end=n_bases/1000)

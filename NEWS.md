@@ -2,6 +2,7 @@
 
 * `get_loci()` "lead" column is the best lead SNP from distance (i.e., all input SNPs) or from LD clumping (subset in EUR panel)
 * Fixes for `get_loci()` niche cases
+* Fixes for `get_nearest_gene()` niche cases
 
 # gwasRtools 0.1.1
 
