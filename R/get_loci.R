@@ -25,7 +25,7 @@
 #' @param ld_pruning_r2 Numeric. Default=0.001. Pruning threshold for LD.
 #' @param ld_clump_local Logical. Default=TRUE. If clumping using local installation (rather than IEU API) - see ieugwasr::ld_clump() docs
 #' @param ld_plink_bin A string. Default="plink". Path to Plink v1.90 binary
-#' @param ld_bfile A string. Default="/indy/data/ld/1kg_v3/EUR". Path to BIM/BED reference panel files
+#' @param ld_bfile A string. Default is to 5,000 random unrelated UK Biobank Europeans - needs a path to appropriate BIM/BED reference panel files on your server
 #'
 #' @examples
 #' get_loci(gwas)
@@ -50,7 +50,7 @@ get_loci = function(gwas,
                     ld_pruning_r2   = 0.001,
                     ld_clump_local  = TRUE,
                     ld_plink_bin    = "plink",
-                    ld_bfile        = "/indy/data/ld/1kg_v3/EUR"
+                    ld_bfile        = "/indy/ukbiobank/data_14631/genetics/imputed_500k/5k_eur/ukb_imp_v3.qc_sub.5k_eur"
 )  {
 
 	## in case a tibble etc is passed...
