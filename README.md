@@ -1,11 +1,20 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+
+
 # gwasRtools
 Some useful R functions for processing GWAS output
 
+<!-- badges: start -->
 [![](https://img.shields.io/badge/version-0.1.2-informational.svg)](https://github.com/lukepilling/gwasRtools)
 [![](https://img.shields.io/github/last-commit/lukepilling/gwasRtools.svg)](https://github.com/lukepilling/gwasRtools/commits/master)
 [![](https://img.shields.io/badge/lifecycle-experimental-orange)](https://www.tidyverse.org/lifecycle/#experimental)
 [![DOI](https://zenodo.org/badge/655790727.svg)](https://zenodo.org/badge/latestdoi/655790727)
-
+<!-- badges: end -->
 
 ## List of functions
   - [lambda_gc()](#lambda_gc)
@@ -14,58 +23,69 @@ Some useful R functions for processing GWAS output
 
 
 ## Installation
-To install `gwasRtools` from GitHub use the `remotes` package:
+To install `gwasRtools` from [GitHub](https://github.com/) with:
 
-`remotes::install_github("lukepilling/gwasRtools")`
-
-To update the package just run the above command again.
-
-
-## lambda_gc()
-Estimate inflation of test statistics. Lambda GC compares the median test statistic against the expected median test statistic under the null hypothesis of no association. For well-powered quantitative traits with a known polygenic inheritance, we expect inflation of lambda GC, but for traits with no expected association, we expect lambda GC to be around 1.
 
 ```r
-lambda_gc(p_values)
+remotes::install_github("lukepilling/gwasRtools")
+```
+
+## Example dataset
+The package includes a subset of variants from the Graham et al. 2021 GWAS of LDL in 1,320,016 Europeans (GWAS catalog GCST90239658). I will use this throughout.
+
+
+```r
+library(gwasRtools)
+head(gwas_example)
+#>           SNP CHR        BP    A1 A2      MAF        BETA        SE     P
+#> 1 rs370704455   1 104275751 CATCT  C 7.21e-02 -0.00350057 0.0040782 0.391
+#> 2 rs545633289   1 104275758     C  G 5.25e-04 -0.36329200 0.2903640 0.211
+#> 3 rs367651119   1 104275797     G  A 5.99e-03 -0.01142350 0.0164861 0.488
+#> 4 rs560138913   1 104296901     T  G 3.67e-03 -0.05503450 0.0318479 0.084
+#> 5 rs533558585   1 104296979     T  C 7.57e-05  0.00173860 0.1826840 0.992
+#> 6 rs551694811   1 104297001     T  A 1.97e-03 -0.01075230 0.0316984 0.734
+```
+
+## lambda_gc()
+Estimate inflation of test statistics. Lambda GC compares the median test statistic against the expected median test statistic under the null hypothesis of no association. For well-powered GWAS of traits with a known polygenic inheritance, we expect inflation of lambda GC. For traits with no expected association, we expect lambda GC to be around 1.
+
+
+```r
+lambda_gc(gwas_example$P)
+#> [1] 1.41112
 ```
 
 ## get_loci()
-Determine loci from a GWAS summary statistics file. Use distance from lead significant SNP to estimate independet loci in GWAS summary stats. Uses -log10(p) derived from BETA/SE so does not need P as input. Example below with default input (output truncated):
+Determine loci from a GWAS summary statistics file. Use distance (500kb by default) from lead significant SNP to estimate independent loci in GWAS summary stats. Uses -log10(p) derived from BETA/SE so does not need P as input. Example below with default input:
+
 
 ```r
-get_loci(
-  gwas,
-  snp_col = "SNP",
-  chr_col = "CHR",
-  pos_col = "BP",
-  maf_col = "MAF",
-  beta_col = "BETA",
-  se_col = "SE",
-  n_bases = 5e5,
-  p_threshold = 5e-8
-)
+gwas_loci = get_loci(gwas_example)
+#> 
+#> Locus size (bases) = 5e+05
+#> P-value threshold = 5e-08
+#> 
+#> N variants = 319732
+#> N variants p<threshold = 4132
+#> N loci = 15
 
-# example using BOLT-LMM output:
-gwas_loci = get_loci(gwas, maf_col="A1FREQ")
+head(gwas_loci)
+#>               SNP CHR        BP   A1 A2   MAF       BETA         SE        P locus  lead
+#> 57882  rs12046439   1 107536799    T  C 0.248 0.00997159 0.00170546 5.01e-09     1 FALSE
+#> 57900 rs143849791   1 107537916 CATG  C 0.325 0.01283200 0.00164361 5.85e-15     1 FALSE
+#> 57922 rs113329442   1 107539252    A  G 0.330 0.01109240 0.00149706 1.27e-13     1 FALSE
+#> 57987   rs3861909   1 107544176    G  A 0.327 0.01187220 0.00150837 3.52e-15     1 FALSE
+#> 58025  rs17496332   1 107546375    A  G 0.331 0.01110260 0.00148844 8.70e-14     1 FALSE
+#> 58091   rs2878349   1 107549245    G  A 0.327 0.01182020 0.00149200 2.33e-15     1 FALSE
 
-head(gwas_loci, 5)
-#> # A tibble: 5 × 11
-#>    SNP               CHR        BP ALLELE1 ALLELE0 A1FREQ    BETA      SE  P_BOLT_LMM locus lead 
-#>    <chr>           <dbl>     <dbl> <chr>   <chr>    <dbl>   <dbl>   <dbl>       <dbl> <dbl> <lgl>
-#>  1 rs3041466           2 142820625 C       CAA      0.492 -0.0177 0.00317 0.000000021     1 TRUE 
-#>  2 rs5858140           4  49039586 C       CA       0.429 -0.0182 0.00332 0.000000036     2 FALSE
-#>  3 rs2605231           4  49057424 A       T        0.293 -0.0179 0.00329 0.000000044     2 FALSE
-#>  4 4:49057608_AT_A     4  49057608 AT      A        0.301 -0.0188 0.00338 0.000000024     2 FALSE
-#>  5 4:49057930_CT_C     4  49057930 CT      C        0.286 -0.0186 0.00336 0.000000029     2 FALSE
-
-head(gwas_loci |> filter(lead==TRUE), 5)
-#> # A tibble: 5 × 11
-#>    SNP          CHR        BP ALLELE1 ALLELE0 A1FREQ    BETA      SE P_BOLT_LMM locus lead 
-#>    <chr>      <dbl>     <dbl> <chr>   <chr>    <dbl>   <dbl>   <dbl>      <dbl> <dbl> <lgl>
-#>  1 rs3041466      2 142820625 C       CAA      0.492 -0.0177 0.00317   2.10e- 8     1 TRUE 
-#>  2 rs11722559     4  49227587 T       C        0.225 -0.0240 0.00391   7.70e-10     2 TRUE 
-#>  3 rs4865414      4  52758294 C       T        0.684  0.0200 0.00322   5.10e-10     3 TRUE 
-#>  4 rs74405522     6 157205286 T       C        0.962  0.0432 0.00788   4.20e- 8     4 TRUE 
-#>  5 rs55730499     6 161005610 C       T        0.918  0.0378 0.00548   5.80e-12     5 TRUE
+gwas_loci |> dplyr::filter(lead==TRUE) |> head()
+#>           SNP CHR        BP A1 A2     MAF        BETA         SE         P locus lead
+#> 1 rs111232683   1 107566149  G  C 0.34300  0.01352040 0.00161401  5.43e-17     1 TRUE
+#> 2 rs114254196   1 108635400  C  T 0.00848 -0.04481140 0.00818473  4.38e-08     2 TRUE
+#> 3 rs115292790   1 109310728  G  A 0.01360 -0.05639270 0.00608890  2.01e-20     3 TRUE
+#> 4  rs12740374   1 109817590  G  T 0.21900 -0.14822800 0.00166391 4.73e-305     4 TRUE
+#> 5 rs140266316   1 110326545  G  A 0.01630 -0.05770880 0.00597770  4.73e-22     5 TRUE
+#> 6    rs657801   1 111736389  T  C 0.31500  0.00905412 0.00150713  1.88e-09     6 TRUE
 ```
 
  - Loci are numbered. Variants within a locus (i.e., significant below the `p_threshold` and less than `n_bases` from last significant variant).
@@ -75,59 +95,80 @@ head(gwas_loci |> filter(lead==TRUE), 5)
 
 Setting option `get_ld_indep=TRUE` will use {[ieugwasr](https://github.com/MRCIEU/ieugwasr)} package `ld_clump()` function to run Plink LD clumping. 
 
-Default is to use a local Plink installation (this is faster) with EUR reference panel. But setting option `ld_clump_local` to FALSE will use the online IEU API. See the {ieugwasr} docs for details. Default R2 threshold for LD pruning is 0.001 (modify with `ld_pruning_r2` option). 
+Default is to use a local Plink installation (this is faster) with EUR reference panel. But setting option `ld_clump_local` to FALSE will use the online IEU API. See the {ieugwasr} docs for details. Default R2 threshold for LD pruning is 0.01 (modify with `ld_pruning_r2` option). 
+
 
 ```r
-get_loci(
-  gwas,
-  snp_col = "SNP",
-  chr_col = "CHR",
-  pos_col = "BP",
-  maf_col = "MAF",
-  beta_col = "BETA",
-  se_col = "SE",
-  n_bases = 5e5,
-  p_threshold = 5e-8,
-  get_ld_indep=TRUE
-)
+gwas_loci = get_loci(gwas_example, get_ld_indep=TRUE)
+#> ** Performing LD clumping. Can take a few minutes
+#> ** Local Plink installation will be called 
+#> ** Plink output would appear here on your screen. Excluded here for the README
+#> 
+#> Locus size (bases) = 5e+05
+#> P-value threshold = 5e-08
+#> 
+#> N variants = 319732
+#> N variants p<threshold = 4132
+#> N loci = 15
+#> N independent variants (LD R2 threshold 0.01) = 153
 
-# example using BOLT-LMM output:
-gwas_loci = get_loci(gwas, maf_col="A1FREQ", get_ld_indep=TRUE)
+head(gwas_loci)
+#>               SNP CHR        BP   A1 A2   MAF       BETA         SE        P locus  lead lead_dist lead_ld
+#> 57882  rs12046439   1 107536799    T  C 0.248 0.00997159 0.00170546 5.01e-09     1 FALSE     FALSE   FALSE
+#> 57900 rs143849791   1 107537916 CATG  C 0.325 0.01283200 0.00164361 5.85e-15     1 FALSE     FALSE   FALSE
+#> 57922 rs113329442   1 107539252    A  G 0.330 0.01109240 0.00149706 1.27e-13     1 FALSE     FALSE   FALSE
+#> 57987   rs3861909   1 107544176    G  A 0.327 0.01187220 0.00150837 3.52e-15     1 FALSE     FALSE   FALSE
+#> 58025  rs17496332   1 107546375    A  G 0.331 0.01110260 0.00148844 8.70e-14     1 FALSE     FALSE   FALSE
+#> 58091   rs2878349   1 107549245    G  A 0.327 0.01182020 0.00149200 2.33e-15     1 FALSE     FALSE   FALSE
 
-head(gwas_loci |> filter(lead==TRUE), 5)
-#> # A tibble: 5 × 11
-#>   SNP           CHR        BP ALLELE1 ALLELE0 A1FREQ    BETA      SE P_BOLT_LMM locus lead  lead_dist lead_ld
-#>   <chr>       <dbl>     <dbl> <chr>   <chr>    <dbl>   <dbl>   <dbl>      <dbl> <dbl> <lgl> <lgl>     <lgl>
-#> 1 rs333957        1 110434791 C       G       0.579   0.0432 0.00708  9.2 e- 10     1 TRUE  TRUE      TRUE
-#> 2 rs182541539     2 189399724 C       T       0.993  -0.270  0.0459   1   e-  8     2 TRUE  FALSE     TRUE
-#> 3 rs10207004      2 190246799 C       T       0.964  -0.356  0.0182   1.20e- 88     2 TRUE  TRUE      TRUE
-#> 4 rs78842559      2 190396563 G       T       0.977  -0.221  0.0228   3.20e- 23     2 TRUE  FALSE     TRUE
-#> 5 rs4428180       3 133466374 A       G       0.851  -0.120  0.00965  7.5 e- 38     3 TRUE  TRUE      FALSE
+gwas_loci |> dplyr::filter(lead==TRUE) |> head()
+#>           SNP CHR        BP A1 A2     MAF       BETA         SE        P locus lead lead_dist lead_ld
+#> 1 rs111232683   1 107566149  G  C 0.34300  0.0135204 0.00161401 5.43e-17     1 TRUE      TRUE    TRUE
+#> 2 rs114254196   1 108635400  C  T 0.00848 -0.0448114 0.00818473 4.38e-08     2 TRUE      TRUE    TRUE
+#> 3 rs140300970   1 109020060  A  T 0.02240 -0.0278210 0.00496721 2.13e-08     3 TRUE     FALSE    TRUE
+#> 4 rs148503795   1 109166178  C  G 0.01050 -0.0423267 0.00709770 2.47e-09     3 TRUE     FALSE    TRUE
+#> 5  rs74896173   1 109167705  T  C 0.00914 -0.0429793 0.00766819 2.08e-08     3 TRUE     FALSE    TRUE
+#> 6 rs111751551   1 109242056  G  A 0.01010 -0.0505560 0.00697787 4.32e-13     3 TRUE     FALSE    TRUE
 ```
 
-Where before, locus 2 would only have had one lead SNP (based on distance/lowest p-value) `ld_clump()` has identified multiple independent variants in the region.
 
-Note that the original `locus` columns remain. Columns `lead_dist` and `lead_ld` are added, reflecting the lead identified by the two methods. The `lead` columns combines the two (some SNPs are missing from LD panel so it does not always choose the lowest p-value if only 1 variant identified at a locus).
+Where before, locus 3 would only have had one lead SNP (based on distance/lowest p-value) `ld_clump()` has identified multiple independent variants in the region.
+
+Note that there are now three `lead` columns:
+ - `lead_dist` is the original `lead` column, simply based on distance and p-values
+ - `lead_ld` is the direct results from `ld_clump()`
+ - The `lead` column combines the two (some SNPs are missing from LD panel so it does not always choose the lowest p-value if only 1 variant identified at a locus).
+
+** Note that `ld_clump()` only considers R^2 when defining independent variants, not D' -- you should perform additional checking/conditional analysis where relevant for `lead` variants in close proximity.
 
 
 ## get_nearest_gene()
-Get nearest gene from a set of variants using GENCODE data. Need to provide a data.frame of variant IDs (e.g., rsids), CHR and POS. Defaults below, with example output:
+Get nearest gene from a set of variants using GENCODE data. Need to provide a data.frame of variant IDs (e.g., rsids), CHR and POS. Default column names are the same as for `get_loci()`. Default max distance from variant to gene is 100kb.
+
 
 ```r
-get_nearest_gene(
-  snps,
-  snp_col = "SNP",
-  chr_col = "CHR",
-  pos_col = "BP",
-  build   = 37,
-  n_bases = 1e5
-)
-#> # A tibble: 3 × 5
-#>   SNP          CHR        BP gene        dist
-#>   <chr>      <dbl>     <dbl> <chr>      <dbl>
-#> 1 rs55730499     6 161005610 LPA       -53095
-#> 3 rs814573      19  45424351 APOC1       1745
-#> 3 rs123456      20  98765432 NA            NA
+gwas_loci = get_nearest_gene(gwas_loci, build=37)
+#> Using human genome build 37
+#> Getting nearest gene for 4131 unique variants
+#> (Removed 1 duplicated or missing variant IDs/positions)
+
+head(gwas_loci)
+#>           SNP CHR        BP   A1 A2   MAF       BETA         SE        P locus  lead lead_dist lead_ld  gene  dist
+#> 1  rs12046439   1 107536799    T  C 0.248 0.00997159 0.00170546 5.01e-09     1 FALSE     FALSE   FALSE PRMT6 62468
+#> 2 rs143849791   1 107537916 CATG  C 0.325 0.01283200 0.00164361 5.85e-15     1 FALSE     FALSE   FALSE PRMT6 61351
+#> 3 rs113329442   1 107539252    A  G 0.330 0.01109240 0.00149706 1.27e-13     1 FALSE     FALSE   FALSE PRMT6 60015
+#> 4   rs3861909   1 107544176    G  A 0.327 0.01187220 0.00150837 3.52e-15     1 FALSE     FALSE   FALSE PRMT6 55091
+#> 5  rs17496332   1 107546375    A  G 0.331 0.01110260 0.00148844 8.70e-14     1 FALSE     FALSE   FALSE PRMT6 52892
+#> 6   rs2878349   1 107549245    G  A 0.327 0.01182020 0.00149200 2.33e-15     1 FALSE     FALSE   FALSE PRMT6 50022
+
+gwas_loci |> dplyr::filter(lead==TRUE) |> head()
+#>           SNP CHR        BP A1 A2     MAF       BETA         SE        P locus lead lead_dist lead_ld     gene   dist
+#> 1 rs111232683   1 107566149  G  C 0.34300  0.0135204 0.00161401 5.43e-17     1 TRUE      TRUE    TRUE    PRMT6  33118
+#> 2 rs114254196   1 108635400  C  T 0.00848 -0.0448114 0.00818473 4.38e-08     2 TRUE      TRUE    TRUE SLC25A24  41258
+#> 3 rs140300970   1 109020060  A  T 0.02240 -0.0278210 0.00496721 2.13e-08     3 TRUE     FALSE    TRUE    NBPF6   6436
+#> 4 rs148503795   1 109166178  C  G 0.01050 -0.0423267 0.00709770 2.47e-09     3 TRUE     FALSE    TRUE  FAM102B -63467
+#> 5  rs74896173   1 109167705  T  C 0.00914 -0.0429793 0.00766819 2.08e-08     3 TRUE     FALSE    TRUE  FAM102B -64994
+#> 6 rs111751551   1 109242056  G  A 0.01010 -0.0505560 0.00697787 4.32e-13     3 TRUE     FALSE    TRUE  PRPF38B  -7111
 ```
  - If `dist` is positive, the variant is intergenic, and this is the distance to the closest gene.
  - If `dist` is negative, the variant is within a gene, and this is the distance to the start of the gene.

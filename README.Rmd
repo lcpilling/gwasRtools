@@ -35,7 +35,7 @@ Some useful R functions for processing GWAS output
 To install `gwasRtools` from [GitHub](https://github.com/) with:
 
 ``` {r}
-remotes::install_github("lukepilling/gwasRtools")`
+remotes::install_github("lukepilling/gwasRtools")
 ```
 
 ## Example dataset
@@ -95,7 +95,7 @@ Note that there are now three `lead` columns:
 ## get_nearest_gene()
 Get nearest gene from a set of variants using GENCODE data. Need to provide a data.frame of variant IDs (e.g., rsids), CHR and POS. Default column names are the same as for `get_loci()`. Default max distance from variant to gene is 100kb.
 
-```r
+``` {r}
 gwas_loci = get_nearest_gene(gwas_loci, build=37)
 
 head(gwas_loci)

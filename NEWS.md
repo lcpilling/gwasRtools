@@ -1,5 +1,6 @@
 # gwasRtools 0.1.2
 
+* Added `gwas_example` data for running examples
 * `get_loc()` Genetic loci are now defined around variants with p-value < 5 × 10−8. The locus borders were set 500kb (`n_bases`) to each side of the highest genome-wide significant variant in each region. 
 * `get_loci()` "lead" column is the best lead SNP from distance (i.e., all input SNPs) or from LD clumping (subset in reference dataset panel)
 * Fixes for `get_loci()` niche cases
