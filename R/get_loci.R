@@ -236,3 +236,22 @@ get_loci = function(gwas,
 }
 
 
+# testing 
+#library(tidyverse)
+#library(gwasRtools)
+#gwas_loci = read_tsv("mri40k_liver_iron_451K_qn.bolt.imputed.qc.sig.txt")
+#gwas_loci = gwas_loci |> select(-lead, -locus, -lead_dist, -lead_ld, -gene, -dist)
+#gwas_loci = as.data.frame(gwas_loci)
+#gwas_loci[,"P_neglog10"] = gwasRtools:::P_neglog10( gwas_loci[,"P_BOLT_LMM"], is_p=TRUE )
+#gwas_loci[,"locus"] = 0
+#gwas_loci[,"lead"] = FALSE
+#beta_col="BETA"
+#se_col="SE"
+#maf_col="A1FREQ"
+#chr_col="CHR"
+#pos_col="BP"
+#chrs = unique(as.numeric(gwas_loci[,chr_col]))
+#chrs = chrs[order(chrs)]
+#i=2
+#locus=1
+#n_bases = 5e5
