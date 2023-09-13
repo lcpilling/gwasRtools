@@ -19,10 +19,11 @@ get_loci(
   n_bases = 5e+05,
   p_threshold = 5e-08,
   get_ld_indep = FALSE,
-  ld_pruning_r2 = 0.001,
+  ld_pruning_r2 = 0.01,
   ld_clump_local = TRUE,
   ld_plink_bin = "plink",
-  ld_bfile = "/indy/data/ld/1kg_v3/EUR"
+  ld_bfile =
+    "/indy/ukbiobank/data_14631/genetics/imputed_500k/5k_eur/ukb_imp_v3.qc_sub.5k_eur"
 )
 }
 \arguments{
@@ -48,19 +49,19 @@ get_loci(
 
 \item{use_pvalue}{Logical. Default=FALSE. Use the provided p-value (in `p_col`) rather than computing from the test statistic? Useful for BOLT-LMM output}
 
-\item{n_bases}{An interger. Default=5e5. The distance between two significant SNPs, beyond which they are defined as in separate loci.}
+\item{n_bases}{An interger. Default=5e5. The distance between two significant loci, beyond which they are defined as in separate loci.}
 
 \item{p_threshold}{A number. Default=5e-8. P-value threshold for statistical significance}
 
 \item{get_ld_indep}{Logical. Default=FALSE. Use Plink LD clumping to identify independent SNPs - see ieugwasr::ld_clump() docs}
 
-\item{ld_pruning_r2}{Numeric. Default=0.001. Pruning threshold for LD.}
+\item{ld_pruning_r2}{Numeric. Default=0.01. Pruning threshold for LD.}
 
 \item{ld_clump_local}{Logical. Default=TRUE. If clumping using local installation (rather than IEU API) - see ieugwasr::ld_clump() docs}
 
 \item{ld_plink_bin}{A string. Default="plink". Path to Plink v1.90 binary}
 
-\item{ld_bfile}{A string. Default="/indy/data/ld/1kg_v3/EUR". Path to BIM/BED reference panel files}
+\item{ld_bfile}{A string. Default is to 5,000 random unrelated UK Biobank Europeans - needs a path to appropriate BIM/BED reference panel files on your server}
 }
 \value{
 Returns a data frame of significant SNPs with locus annotation

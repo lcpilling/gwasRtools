@@ -19,10 +19,10 @@
 #' @param p_col A string. Default="NA". The p-value column name. (Only required if `use_pvalue==TRUE` i.e., using the provided p-value, e.g., P_BOLT_LMM)
 #' @param neglog10p_col A string. Default="NA". The -log10 p-value column name. (Only required if not providing beta+se, or stat)
 #' @param use_pvalue Logical. Default=FALSE. Use the provided p-value (in `p_col`) rather than computing from the test statistic? Useful for BOLT-LMM output
-#' @param n_bases An interger. Default=5e5. The distance between two significant SNPs, beyond which they are defined as in separate loci.
+#' @param n_bases An interger. Default=5e5. The distance between two significant loci, beyond which they are defined as in separate loci.
 #' @param p_threshold A number. Default=5e-8. P-value threshold for statistical significance
 #' @param get_ld_indep Logical. Default=FALSE. Use Plink LD clumping to identify independent SNPs - see ieugwasr::ld_clump() docs
-#' @param ld_pruning_r2 Numeric. Default=0.001. Pruning threshold for LD.
+#' @param ld_pruning_r2 Numeric. Default=0.01. Pruning threshold for LD.
 #' @param ld_clump_local Logical. Default=TRUE. If clumping using local installation (rather than IEU API) - see ieugwasr::ld_clump() docs
 #' @param ld_plink_bin A string. Default="plink". Path to Plink v1.90 binary
 #' @param ld_bfile A string. Default is to 5,000 random unrelated UK Biobank Europeans - needs a path to appropriate BIM/BED reference panel files on your server
@@ -47,7 +47,7 @@ get_loci = function(gwas,
                     n_bases         = 5e5,
                     p_threshold     = 5e-8,
                     get_ld_indep    = FALSE,
-                    ld_pruning_r2   = 0.001,
+                    ld_pruning_r2   = 0.01,
                     ld_clump_local  = TRUE,
                     ld_plink_bin    = "plink",
                     ld_bfile        = "/indy/ukbiobank/data_14631/genetics/imputed_500k/5k_eur/ukb_imp_v3.qc_sub.5k_eur"
@@ -88,8 +88,9 @@ get_loci = function(gwas,
 		dim(gwas_loci)
 		head(gwas_loci)
 		
-		## add empty "locus" column
-		gwas_loci[,"locus"] = NA
+		## add empty "locus" & lead column
+		gwas_loci[,"locus"] = 0
+		gwas_loci[,"lead"] = FALSE
 		
 		## order by BP and CHR
 		gwas_loci[,chr_col] = as.numeric(gwas_loci[,chr_col])
@@ -104,76 +105,63 @@ get_loci = function(gwas,
 		## start locus counting at 0
 		locus = 0
 		
-		## for each chromosome, go down and create loci i.e. if a SNP is >X Mb from the previous SNP this is a new locus!
+		## for each chromosome, go down and create loci 
 		for (i in chrs)
 		{
-			## new CHR, next locus:
-			locus = locus + 1
-		
-			## start locus at 1... & get first position
-			gwas_loci[gwas_loci[,chr_col] == i,"locus"][1] = locus
-	
-			## loop down GWAS results - if more than 1 SNP
-			if (nrow(gwas_loci[gwas_loci[,chr_col] == i,]) > 1)  {
-			for (j in 1:(nrow(gwas_loci[gwas_loci[,chr_col] == i,])-1) )
+			
+			## until all SNPs are assigned a locus, keep going
+			while( any(gwas_loci[gwas_loci[,chr_col] == i,"locus"] == 0) ) 
 			{
-				## by default put next SNP in this locus
-				gwas_loci[gwas_loci[,chr_col] == i,"locus"][j+1] = locus
-	
-				## if distance to next SNP is >X Mb then next SNP is in new locus
-				if (gwas_loci[gwas_loci[,chr_col] == i,pos_col][j+1] - gwas_loci[gwas_loci[,chr_col] == i,pos_col][j]  >  n_bases)
+			
+				## assign smallest p-value to new locus
+				locus = locus + 1
+				this_min_p = max(gwas_loci[gwas_loci[,chr_col] == i & gwas_loci[,"locus"] == 0,"P_neglog10"])
+				gwas_loci[gwas_loci[,chr_col] == i & gwas_loci[,"locus"] == 0 & gwas_loci[,"P_neglog10"] == this_min_p, "locus"] = locus
+				
+				## if >1 pick based on MAF/BETA... otherwise just first one
+				## which row(s) has the lowest p-value for this locus?
+				r = which(gwas_loci[gwas_loci[,chr_col] == i & gwas_loci[,"locus"] == locus,"P_neglog10"] == this_min_p)
+				if (length(r)>1)
 				{
-					locus = locus + 1
-					gwas_loci[gwas_loci[,chr_col] == i,"locus"][j+1] = locus
+					## get betas and mafs
+					mafs = betas = rep(NA, length(r))
+					for (j in 1:length(r))
+					{
+						mafs[j]  = gwas_loci[gwas_loci[,chr_col] == i & gwas_loci[,"locus"] == locus, maf_col][r[j]]
+						betas[j] = abs(gwas_loci[gwas_loci[,chr_col] == i & gwas_loci[,"locus"] == locus, beta_col][r[j]])
+					}
+					
+					## only keep rows with highest maf or beta, in that order
+					r = r[ which(mafs == max(mafs)) ]
+					if (length(r)>1)  r = r[ which(betas == max(betas)) ]
+					
+					## still tied? just keep first one...
+					if (length(r)>1)  r = r[ 1 ]
 				}
-			}
-			}
-		}
-		
-		#head(gwas_loci)
-		#table(gwas_loci[,"locus"])
+				
+				# define lead SNP
+				gwas_loci[gwas_loci[,chr_col] == i & gwas_loci[,"locus"] == locus, "lead"][r] = TRUE
+				
+				## all variants +/- 500kb (n_bases) are in this new locus 
+				lead_pos = gwas_loci[gwas_loci[,chr_col] == i & gwas_loci[,"locus"] == locus & gwas_loci[,"lead"] == TRUE, pos_col]
+				gwas_loci[gwas_loci[,chr_col] == i & 
+				          gwas_loci[,"locus"] == 0 &
+				          gwas_loci[,pos_col] > lead_pos-n_bases &
+				          gwas_loci[,pos_col] < lead_pos+n_bases 
+				          ,"locus"] = locus
+			
+			} # end while
+			
+		} # end CHR loop
 		
 		n_loci = locus
-
-		######################################################
-		## for each locus which is the lead SNP, based on distance
 		
-		## create empty variable
-		gwas_loci[,"lead"] = FALSE
+		# reorder locus numbers 
+		unique_loci = unique(gwas_loci[,"locus"])
+		loci = gwas_loci[,"locus"]
+		for (i in 1:locus)  gwas_loci[loci == unique_loci[i], "locus"] = i
 		
-		## for each locus:
-		for (i in unique(gwas_loci[,"locus"]))
-		{
-			## which row(s) has the lowest p-value for this locus?
-			r = which(gwas_loci[gwas_loci[,"locus"] == i,"P_neglog10"] == max(gwas_loci[gwas_loci[,"locus"] == i,"P_neglog10"]))
-			#print(paste0("Locus ", i, " row(s) ", r))
-			
-			## some loci have 2 SNPs tied for significance and can have very high correlations! 
-			## But which to choose as lead SNP?
-			## use MAF (allele frequency), then BETA (effect size). 
-			## If still tied, choose first.
-			if (length(r)>1)
-			{
-				## get betas and mafs
-				mafs = betas = rep(NA, length(r))
-				for (j in 1:length(r))
-				{
-					mafs[j]  = gwas_loci[gwas_loci[,"locus"] == i,maf_col][r[j]]
-					betas[j] = gwas_loci[gwas_loci[,"locus"] == i,beta_col][r[j]]
-				}
-				
-				## only keep rows with highest maf or beta, in that order
-				r = r[ which(mafs == max(mafs)) ]
-				if (length(r)>1)  r = r[ which(betas == max(betas)) ]
-				
-				## still tied? just keep first one...
-				if (length(r)>1)  r = r[ 1 ]
-			}
-			
-			gwas_loci[gwas_loci[,"locus"] == i , "lead"][r] = TRUE
-		}
-		#table(gwas_loci[,"lead"])
-	
+		
 		######################################################
 		## for each CHR indentify independent SNPs using LD clumping
 		## only if significant in CHRs 1:22
@@ -186,7 +174,7 @@ get_loci = function(gwas,
 			# messages
 			cat("** Performing LD clumping. Can take a few minutes\n")
 			if (ld_clump_local)  cat("** Local Plink installation will be called -- output appears in the terminal screen\n")
-
+			
 			# get RSID, chr and p-value for ld_clump()
 			for_clumping = data.frame(
 				rsid = gwas_loci[,snp_col],
