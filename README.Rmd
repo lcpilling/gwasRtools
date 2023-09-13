@@ -1,0 +1,108 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%",
+  fig.width = 6, height = 4, dpi = 150
+)
+set.seed(1234)
+```
+
+# gwasRtools
+Some useful R functions for processing GWAS output
+
+<!-- badges: start -->
+[![](https://img.shields.io/badge/version-0.1.2-informational.svg)](https://github.com/lukepilling/gwasRtools)
+[![](https://img.shields.io/github/last-commit/lukepilling/gwasRtools.svg)](https://github.com/lukepilling/gwasRtools/commits/master)
+[![](https://img.shields.io/badge/lifecycle-experimental-orange)](https://www.tidyverse.org/lifecycle/#experimental)
+[![DOI](https://zenodo.org/badge/655790727.svg)](https://zenodo.org/badge/latestdoi/655790727)
+<!-- badges: end -->
+
+## List of functions
+  - [lambda_gc()](#lambda_gc)
+  - [get_loci()](#get_loci)
+  - [get_nearest_gene()](#get_nearest_gene)
+
+
+## Installation
+To install `gwasRtools` from [GitHub](https://github.com/) with:
+
+``` {r}
+remotes::install_github("lukepilling/gwasRtools")`
+```
+
+## Example dataset
+The package includes a subset of variants from the Graham et al. 2021 GWAS of LDL in 1,320,016 Europeans (GWAS catalog GCST90239658). I will use this throughout.
+
+``` {r}
+library(gwasRtools)
+head(gwas_example)
+```
+
+## lambda_gc()
+Estimate inflation of test statistics. Lambda GC compares the median test statistic against the expected median test statistic under the null hypothesis of no association. For well-powered GWAS of traits with a known polygenic inheritance, we expect inflation of lambda GC. For traits with no expected association, we expect lambda GC to be around 1.
+
+``` {r}
+lambda_gc(gwas_example$P)
+```
+
+## get_loci()
+Determine loci from a GWAS summary statistics file. Use distance (500kb by default) from lead significant SNP to estimate independent loci in GWAS summary stats. Uses -log10(p) derived from BETA/SE so does not need P as input. Example below with default input:
+
+``` {r}
+gwas_loci = get_loci(gwas_example)
+
+head(gwas_loci)
+
+gwas_loci |> dplyr::filter(lead==TRUE) |> head()
+```
+
+ - Loci are numbered. Variants within a locus (i.e., significant below the `p_threshold` and less than `n_bases` from last significant variant).
+ - Lead variant for each locus is highlighted where `lead==TRUE` (i.e., smallest p-value for any variant within a locus)
+
+### Use LD clumping to identify independent SNPs at the same locus 
+
+Setting option `get_ld_indep=TRUE` will use {[ieugwasr](https://github.com/MRCIEU/ieugwasr)} package `ld_clump()` function to run Plink LD clumping. 
+
+Default is to use a local Plink installation (this is faster) with EUR reference panel. But setting option `ld_clump_local` to FALSE will use the online IEU API. See the {ieugwasr} docs for details. Default R2 threshold for LD pruning is 0.01 (modify with `ld_pruning_r2` option). 
+
+``` {r}
+gwas_loci = get_loci(gwas_example, get_ld_indep=TRUE)
+
+head(gwas_loci)
+
+gwas_loci |> dplyr::filter(lead==TRUE) |> head()
+```
+
+
+Where before, locus 3 would only have had one lead SNP (based on distance/lowest p-value) `ld_clump()` has identified multiple independent variants in the region.
+
+Note that there are now three `lead` columns:
+ - `lead_dist` is the original `lead` column, simply based on distance and p-values
+ - `lead_ld` is the direct results from `ld_clump()`
+ - The `lead` column combines the two (some SNPs are missing from LD panel so it does not always choose the lowest p-value if only 1 variant identified at a locus).
+
+** Note that `ld_clump()` only considers R^2 when defining independent variants, not D' -- you should perform additional checking/conditional analysis where relevant for `lead` variants in close proximity.
+
+
+## get_nearest_gene()
+Get nearest gene from a set of variants using GENCODE data. Need to provide a data.frame of variant IDs (e.g., rsids), CHR and POS. Default column names are the same as for `get_loci()`. Default max distance from variant to gene is 100kb.
+
+```r
+gwas_loci = get_nearest_gene(gwas_loci, build=37)
+
+head(gwas_loci)
+
+gwas_loci |> dplyr::filter(lead==TRUE) |> head()
+```
+ - If `dist` is positive, the variant is intergenic, and this is the distance to the closest gene.
+ - If `dist` is negative, the variant is within a gene, and this is the distance to the start of the gene.
+ - If `dist` is NA, the variant is not within `n_bases` of a gene in GENCODE.
+
