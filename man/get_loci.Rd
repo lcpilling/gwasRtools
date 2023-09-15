@@ -61,7 +61,7 @@ get_loci(
 
 \item{ld_plink_bin}{A string. Default="plink". Path to Plink v1.90 binary}
 
-\item{ld_bfile}{A string. Default is to 5,000 random unrelated UK Biobank Europeans - needs a path to appropriate BIM/BED reference panel files on your server}
+\item{ld_bfile}{A string. Default is to 5,000 random unrelated UK Biobank Europeans on my server :) needs a path to appropriate BIM/BED reference panel files on your server}
 }
 \value{
 Returns a data frame of significant SNPs with locus annotation

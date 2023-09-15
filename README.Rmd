@@ -12,6 +12,8 @@ knitr::opts_chunk$set(
 set.seed(1234)
 ```
 
+<img align="right" src="https://github.com/lukepilling/gwasRtools/raw/master/images/gwasRtools.png" width="200" />
+
 # gwasRtools
 Some useful R functions for processing GWAS output
 
@@ -31,7 +33,7 @@ Some useful R functions for processing GWAS output
 ## Installation
 To install `gwasRtools` from [GitHub](https://github.com/) with:
 
-``` {r}
+```r
 remotes::install_github("lukepilling/gwasRtools")
 ```
 
