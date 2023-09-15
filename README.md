@@ -3,7 +3,7 @@
 
 
 
-<img align="right" src="https://github.com/lukepilling/gwasRtools/raw/master/images/gwasRtools.png" width="200" />
+<img align="right" src="https://raw.githubusercontent.com/lukepilling/gwasRtools/master/images/gwasRtools.png" width="200" />
 
 # gwasRtools
 Some useful R functions for processing GWAS output
