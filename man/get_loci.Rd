@@ -70,7 +70,11 @@ Returns a data frame of significant SNPs with locus annotation
 Use distance from lead significant SNP to estimate independet loci in GWAS summary stats. Uses -log10(p) derived from BETA/SE so does not need P as input.
 }
 \examples{
-get_loci(gwas)
+gwas_loci = get_loci(gwas_example)
+
+head(gwas_loci)
+
+head(gwas_loci[ gwas_loci$lead==TRUE , ])
 
 }
 \author{

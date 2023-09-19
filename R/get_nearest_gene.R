@@ -16,7 +16,13 @@
 #' @param n_bases An interger. Default=1e5. The max distance in base-pairs between a variant and a gene to annotate
 #'
 #' @examples
-#' get_nearest_gene(variants)
+#' gwas_loci = get_loci(gwas_example)
+#'
+#' gwas_loci_genes = get_nearest_gene(gwas_loci)
+#'
+#' head(gwas_loci_genes)
+#'
+#' head(gwas_loci_genes[ gwas_loci_genes$lead==TRUE , ])
 #'
 #' @export
 #'

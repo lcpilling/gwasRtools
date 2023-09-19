@@ -28,7 +28,11 @@
 #' @param ld_bfile A string. Default is to 5,000 random unrelated UK Biobank Europeans on my server :) needs a path to appropriate BIM/BED reference panel files on your server
 #'
 #' @examples
-#' get_loci(gwas)
+#' gwas_loci = get_loci(gwas_example)
+#'
+#' head(gwas_loci)
+#'
+#' head(gwas_loci[ gwas_loci$lead==TRUE , ])
 #'
 #' @export
 #'

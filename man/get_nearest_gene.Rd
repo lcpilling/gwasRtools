@@ -33,7 +33,13 @@ Returns a data frame of variant IDs mapped to genes (with distance)
 Use distance variant position to get the nearest gene. Uses {snpsettest} function `map_snp_to_gene` to identify genes from GENCODE databases (https://github.com/HimesGroup/snpsettest).
 }
 \examples{
-get_nearest_gene(variants)
+gwas_loci = get_loci(gwas_example)
+
+gwas_loci_genes = get_nearest_gene(gwas_loci)
+
+head(gwas_loci_genes)
+
+head(gwas_loci_genes[ gwas_loci_genes$lead==TRUE , ])
 
 }
 \author{
