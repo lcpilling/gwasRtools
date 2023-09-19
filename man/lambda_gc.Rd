@@ -18,7 +18,7 @@ Estimate inflation of test statistics. Lambda GC compares the median test statis
 Original function by Jing Hua Zhao (https://jinghuazhao.github.io/)
 }
 \examples{
-lambda_gc(p)
+lambda_gc(gwas_example$P)
 
 }
 \author{

@@ -13,7 +13,7 @@
 #' @param p a numeric vector of p-values
 #'
 #' @examples
-#' lambda_gc(p)
+#' lambda_gc(gwas_example$P)
 #'
 #' @export
 #'
