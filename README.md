@@ -22,12 +22,22 @@ Some useful R functions for processing GWAS output
 
 
 ## Installation
-To install `gwasRtools` from [GitHub](https://github.com/) with:
-
+To install the development version from GitHub use the `remotes` package:
 
 ```r
 remotes::install_github("lukepilling/gwasRtools")
 ```
+
+I periodically "release" a version number once it works as expected. The development version may contain things that do not yet "work."
+
+```r
+# To install the latest release, use:
+remotes::install_github("lukepilling/gwasRtools@*release")
+
+# To install a specific version (see tags), use:
+remotes::install_github("lukepilling/gwasRtools@v0.1.2", force=TRUE)
+```
+
 
 ## Example dataset
 The package includes a subset of variants from the Graham et al. 2021 GWAS of LDL in 1,320,016 Europeans (GWAS catalog GCST90239658). I will use this throughout.
