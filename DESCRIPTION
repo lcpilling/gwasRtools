@@ -7,7 +7,7 @@ Authors@R: c(person("Luke", "Pilling",
                     comment = c(ORCID = "0000-0002-3332-8454")))
 Description: Some useful R functions for processing GWAS output. Some shamelessly borrowed from other packages and the internet generally.
 License: GPL-3
-URL: https://github.com/lukepilling/gwasRtools
+URL: https://lukepilling.github.io/gwasRtools, https://github.com/lukepilling/gwasRtools
 Depends: 
   R (>= 4.1.1)
 Imports:
