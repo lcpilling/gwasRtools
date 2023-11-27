@@ -1,6 +1,6 @@
 # gwasRtools 0.1.3 (27 Nov 2023)
 
-* `get_loci()` default is now to treat the HLA region as one continuous locus. Set `exclude_hla = FALSE` if you don't want this. Coordinates are specified with `hla_pos = c(25e6, 34e6)` [these are the defaults]
+* `get_loci()` now has the option `exclude_hla` to treat the HLA region as one continuous locus (default = FALSE). Coordinates are specified with `hla_pos = c(25e6, 34e6)` [these are the defaults]
 * Minor documentation updates
 
 # gwasRtools 0.1.2 (15 Sept 2023)
