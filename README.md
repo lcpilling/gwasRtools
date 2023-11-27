@@ -9,16 +9,16 @@
 Some useful R functions for processing GWAS output
 
 <!-- badges: start -->
-[![](https://img.shields.io/badge/version-0.1.2-informational.svg)](https://github.com/lukepilling/gwasRtools)
+[![](https://img.shields.io/badge/version-0.1.3-informational.svg)](https://github.com/lukepilling/gwasRtools)
 [![](https://img.shields.io/github/last-commit/lukepilling/gwasRtools.svg)](https://github.com/lukepilling/gwasRtools/commits/master)
 [![](https://img.shields.io/badge/lifecycle-experimental-orange)](https://www.tidyverse.org/lifecycle/#experimental)
 [![DOI](https://zenodo.org/badge/655790727.svg)](https://zenodo.org/badge/latestdoi/655790727)
 <!-- badges: end -->
 
 ## List of functions
-  - [lambda_gc()](#lambda_gc)
   - [get_loci()](#get_loci)
   - [get_nearest_gene()](#get_nearest_gene)
+  - [lambda_gc()](#lambda_gc)
 
 
 ## Installation
@@ -55,17 +55,9 @@ head(gwas_example)
 #> 6 rs551694811   1 104297001     T  A 1.97e-03 -0.01075230 0.0316984 0.734
 ```
 
-## lambda_gc()
-Estimate inflation of test statistics. Lambda GC compares the median test statistic against the expected median test statistic under the null hypothesis of no association. For well-powered GWAS of traits with a known polygenic inheritance, we expect inflation of lambda GC. For traits with no expected association, we expect lambda GC to be around 1.
-
-
-```r
-lambda_gc(gwas_example$P)
-#> [1] 1.41112
-```
 
 ## get_loci()
-Determine loci from a GWAS summary statistics file. Use distance (500kb by default) from lead significant SNP to estimate independent loci in GWAS summary stats. Uses -log10(p) derived from BETA/SE so does not need P as input. Example below with default input:
+Determine loci from a GWAS summary statistics file. Use distance from lead significant SNP to estimate independent loci in GWAS summary stats [default distance = 500kb]. By default, the HLA region is treated is one continuous locus due to the complex LD. Uses -log10(p) derived from BETA/SE so does not need P as input. Example below with default input:
 
 
 ```r
@@ -182,3 +174,13 @@ gwas_loci |> dplyr::filter(lead==TRUE) |> head()
  - If `dist` is negative, the variant is within a gene, and this is the distance to the start of the gene.
  - If `dist` is NA, the variant is not within `n_bases` of a gene in GENCODE.
 
+
+
+## lambda_gc()
+Estimate inflation of test statistics. Lambda GC compares the median test statistic against the expected median test statistic under the null hypothesis of no association. For well-powered GWAS of traits with a known polygenic inheritance, we expect inflation of lambda GC. For traits with no expected association, we expect lambda GC to be around 1.
+
+
+```r
+lambda_gc(gwas_example$P)
+#> [1] 1.41112
+```

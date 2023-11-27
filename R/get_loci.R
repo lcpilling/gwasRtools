@@ -21,11 +21,14 @@
 #' @param use_pvalue Logical. Default=FALSE. Use the provided p-value (in `p_col`) rather than computing from the test statistic? Useful for BOLT-LMM output
 #' @param n_bases An interger. Default=5e5. The distance between two significant loci, beyond which they are defined as in separate loci.
 #' @param p_threshold A number. Default=5e-8. P-value threshold for statistical significance
+#' @param exclude_hla Logical. Default=TRUE. Treat HLA as one continuous locus
+#' @param hla_pos A numeric vector of length 2. Default=c(25e6, 34e6). The HLA region on chromosome 6 to treat as one continuous locus if `exclude_hla==TRUE`
 #' @param get_ld_indep Logical. Default=FALSE. Use Plink LD clumping to identify independent SNPs - see ieugwasr::ld_clump() docs
 #' @param ld_pruning_r2 Numeric. Default=0.01. Pruning threshold for LD.
 #' @param ld_clump_local Logical. Default=TRUE. If clumping using local installation (rather than IEU API) - see ieugwasr::ld_clump() docs
 #' @param ld_plink_bin A string. Default="plink". Path to Plink v1.90 binary
 #' @param ld_bfile A string. Default is to 5,000 random unrelated UK Biobank Europeans on my server :) needs a path to appropriate BIM/BED reference panel files on your server
+#' @param verbose Logical. Default=FALSE. Be verbose
 #'
 #' @examples
 #' gwas_loci = get_loci(gwas_example)
@@ -33,6 +36,8 @@
 #' head(gwas_loci)
 #'
 #' head(gwas_loci[ gwas_loci$lead==TRUE , ])
+#'
+#' # example if GWAS is BOLT-LMM output: gwas_loci = get_loci(gwas, maf_col="A1FREQ", p_col="P_BOLT_LMM", use_pvalue=TRUE)
 #'
 #' @export
 #'
@@ -50,17 +55,26 @@ get_loci = function(gwas,
                     use_pvalue      = FALSE,
                     n_bases         = 5e5,
                     p_threshold     = 5e-8,
+                    exclude_hla     = TRUE,
+                    hla_pos         = c(25e6, 34e6),
                     get_ld_indep    = FALSE,
                     ld_pruning_r2   = 0.01,
                     ld_clump_local  = TRUE,
                     ld_plink_bin    = "plink",
-                    ld_bfile        = "/indy/ukbiobank/data_14631/genetics/imputed_500k/5k_eur/ukb_imp_v3.qc_sub.5k_eur"
+                    ld_bfile        = "/indy/ukbiobank/data_14631/genetics/imputed_500k/5k_eur/ukb_imp_v3.qc_sub.5k_eur",
+                    verbose         = FALSE
 )  {
 
+	cat(paste0("\nLocus size (bases) = ", n_bases, "\n"))
+	cat("\nHLA region will be treated as one continuous locus\n\n")
+	cat(paste0("P-value threshold = ", p_threshold, "\n\n"))
+	
 	## in case a tibble etc is passed...
 	gwas = as.data.frame(gwas)
+	if (verbose)  cat("GWAS has ", nrow(gwas), " variants\n")
 
 	## will use -log10 of the p-value in case any p-values were <5e-324 and are rounded to 0 in many software
+	if (verbose)  cat("Getting -log10 p-value\n")
 	if (!use_pvalue & neglog10p_col != "NA")  gwas[,"P_neglog10"] = gwas[,neglog10p_col]
 	if (!use_pvalue & stat_col != "NA")  gwas[,"stat_tmp"] = gwas[,stat_col]
 	if (!use_pvalue & neglog10p_col == "NA" & stat_col == "NA")  {
@@ -79,7 +93,7 @@ get_loci = function(gwas,
 	# are any SNPs GWAS significant? i.e., -log10 of 5e-8
 	if (any(gwas[,"P_neglog10"] > p_threshold_neglog10))
 	{
-	
+		
 		## exclude if P_neglog10 is NA - implies problem with BETA or SE - suggest to user to provide the Z or P_neglog10 directly
 		n_na = length(which( is.na(gwas[,"P_neglog10"]) ))
 		if (n_na >= 1)  {
@@ -89,8 +103,8 @@ get_loci = function(gwas,
 		
 		## creating GWAS hits file 
 		gwas_loci = gwas[ gwas[,"P_neglog10"] > p_threshold_neglog10 , ]
-		dim(gwas_loci)
-		head(gwas_loci)
+		
+		if (verbose)  cat("Found ", nrow(gwas_loci), " with -log10 p-value below threshold\n")
 		
 		## add empty "locus" & lead column
 		gwas_loci[,"locus"] = 0
@@ -108,6 +122,17 @@ get_loci = function(gwas,
 		
 		## start locus counting at 0
 		locus = 0
+		
+		if (verbose)  cat("Determining loci\n")
+		
+		# treat HLA region as one continuous locus?
+		if (exclude_hla)  {
+			gwas_loci_hla = gwas_loci[ gwas_loci[,chr_col]==6 & gwas_loci[,pos_col] > hla_pos[1] & gwas_loci[,pos_col] < hla_pos[2] ,]
+			
+			if (nrow( gwas_loci_hla )>0)  {
+				gwas_loci = gwas_loci[ ! (gwas_loci[,chr_col]==6 & gwas_loci[,pos_col] > hla_pos[1] & gwas_loci[,pos_col] < hla_pos[2]) ,]
+			}
+		}
 		
 		## for each chromosome, go down and create loci 
 		for (i in chrs)
@@ -158,12 +183,37 @@ get_loci = function(gwas,
 			
 		} # end CHR loop
 		
+		# treat HLA region as one continuous locus?
+		if (exclude_hla)  {
+			
+			if (nrow( gwas_loci_hla )>0)  {
+				
+				locus = locus + 1
+				
+				# make locus number all the same. get new "lead".
+				gwas_loci_hla[,"locus"] = locus
+				gwas_loci_hla[, "lead"] = FALSE
+				gwas_loci_hla[ gwas_loci_hla[,"P_neglog10"] == max(gwas_loci_hla[,"P_neglog10"]), "lead"] = TRUE
+				
+				# add back to main object
+				gwas_loci = rbind(gwas_loci, gwas_loci_hla)
+				gwas_loci = gwas_loci[ order(as.numeric(gwas_loci[,pos_col])) , ]
+				gwas_loci = gwas_loci[ order(as.numeric(gwas_loci[,chr_col])) , ]
+				
+			}
+		}
+		
 		n_loci = locus
+		if (verbose)  cat("Found ", n_loci, " loci\n")
 		
 		# reorder locus numbers 
 		unique_loci = unique(gwas_loci[,"locus"])
 		loci = gwas_loci[,"locus"]
-		for (i in 1:locus)  gwas_loci[loci == unique_loci[i], "locus"] = i
+		i = 1
+		for (locus in unique_loci)  {
+			gwas_loci[loci == locus, "locus"] = i
+			i = i + 1
+		}
 		
 		
 		######################################################
@@ -188,6 +238,12 @@ get_loci = function(gwas,
 			
 			# no X or Y for clumping step
 			for_clumping = for_clumping[ for_clumping$chr %in% 1:22 , ]
+			
+			# treat HLA region as one continuous locus?
+			if (exclude_hla)  {
+				hla_rsids = gwas_loci[ gwas_loci[,chr_col]==6 & gwas_loci[,pos_col] > hla_pos[1] & gwas_loci[,pos_col] < hla_pos[2] , snp_col ]
+				for_clumping = for_clumping[ ! for_clumping$rsid %in% hla_rsids , ]
+			}
 			
 			# get independent SNPs based on LD
 			ld_indep = NULL
@@ -220,9 +276,6 @@ get_loci = function(gwas,
 			}
 			
 		}
-		
-		cat(paste0("\nLocus size (bases) = ", n_bases, "\n"))
-		cat(paste0("P-value threshold = ", p_threshold, "\n\n"))
 		
 		cat(paste0("N variants = ", nrow(gwas), "\n"))
 		cat(paste0("N variants p<threshold = ", nrow(gwas_loci), "\n"))

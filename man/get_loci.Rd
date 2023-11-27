@@ -18,12 +18,15 @@ get_loci(
   use_pvalue = FALSE,
   n_bases = 5e+05,
   p_threshold = 5e-08,
+  exclude_hla = TRUE,
+  hla_pos = c(2.5e+07, 3.4e+07),
   get_ld_indep = FALSE,
   ld_pruning_r2 = 0.01,
   ld_clump_local = TRUE,
   ld_plink_bin = "plink",
   ld_bfile =
-    "/indy/ukbiobank/data_14631/genetics/imputed_500k/5k_eur/ukb_imp_v3.qc_sub.5k_eur"
+    "/indy/ukbiobank/data_14631/genetics/imputed_500k/5k_eur/ukb_imp_v3.qc_sub.5k_eur",
+  verbose = FALSE
 )
 }
 \arguments{
@@ -53,6 +56,10 @@ get_loci(
 
 \item{p_threshold}{A number. Default=5e-8. P-value threshold for statistical significance}
 
+\item{exclude_hla}{Logical. Default=TRUE. Treat HLA as one continuous locus}
+
+\item{hla_pos}{A numeric vector of length 2. Default=c(25e6, 34e6). The HLA region on chromosome 6 to treat as one continuous locus if `exclude_hla==TRUE`}
+
 \item{get_ld_indep}{Logical. Default=FALSE. Use Plink LD clumping to identify independent SNPs - see ieugwasr::ld_clump() docs}
 
 \item{ld_pruning_r2}{Numeric. Default=0.01. Pruning threshold for LD.}
@@ -62,6 +69,8 @@ get_loci(
 \item{ld_plink_bin}{A string. Default="plink". Path to Plink v1.90 binary}
 
 \item{ld_bfile}{A string. Default is to 5,000 random unrelated UK Biobank Europeans on my server :) needs a path to appropriate BIM/BED reference panel files on your server}
+
+\item{verbose}{Logical. Default=FALSE. Be verbose}
 }
 \value{
 Returns a data frame of significant SNPs with locus annotation
@@ -75,6 +84,8 @@ gwas_loci = get_loci(gwas_example)
 head(gwas_loci)
 
 head(gwas_loci[ gwas_loci$lead==TRUE , ])
+
+# example if GWAS is BOLT-LMM output: gwas_loci = get_loci(gwas, maf_col="A1FREQ", p_col="P_BOLT_LMM", use_pvalue=TRUE)
 
 }
 \author{
