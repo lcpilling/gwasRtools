@@ -18,7 +18,7 @@ get_loci(
   use_pvalue = FALSE,
   n_bases = 5e+05,
   p_threshold = 5e-08,
-  exclude_hla = TRUE,
+  exclude_hla = FALSE,
   hla_pos = c(2.5e+07, 3.4e+07),
   get_ld_indep = FALSE,
   ld_pruning_r2 = 0.01,
@@ -56,7 +56,7 @@ get_loci(
 
 \item{p_threshold}{A number. Default=5e-8. P-value threshold for statistical significance}
 
-\item{exclude_hla}{Logical. Default=TRUE. Treat HLA as one continuous locus}
+\item{exclude_hla}{Logical. Default=FALSE. Treat HLA as one continuous locus}
 
 \item{hla_pos}{A numeric vector of length 2. Default=c(25e6, 34e6). The HLA region on chromosome 6 to treat as one continuous locus if `exclude_hla==TRUE`}
 

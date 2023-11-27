@@ -21,7 +21,7 @@
 #' @param use_pvalue Logical. Default=FALSE. Use the provided p-value (in `p_col`) rather than computing from the test statistic? Useful for BOLT-LMM output
 #' @param n_bases An interger. Default=5e5. The distance between two significant loci, beyond which they are defined as in separate loci.
 #' @param p_threshold A number. Default=5e-8. P-value threshold for statistical significance
-#' @param exclude_hla Logical. Default=TRUE. Treat HLA as one continuous locus
+#' @param exclude_hla Logical. Default=FALSE. Treat HLA as one continuous locus
 #' @param hla_pos A numeric vector of length 2. Default=c(25e6, 34e6). The HLA region on chromosome 6 to treat as one continuous locus if `exclude_hla==TRUE`
 #' @param get_ld_indep Logical. Default=FALSE. Use Plink LD clumping to identify independent SNPs - see ieugwasr::ld_clump() docs
 #' @param ld_pruning_r2 Numeric. Default=0.01. Pruning threshold for LD.
@@ -55,7 +55,7 @@ get_loci = function(gwas,
                     use_pvalue      = FALSE,
                     n_bases         = 5e5,
                     p_threshold     = 5e-8,
-                    exclude_hla     = TRUE,
+                    exclude_hla     = FALSE,
                     hla_pos         = c(25e6, 34e6),
                     get_ld_indep    = FALSE,
                     ld_pruning_r2   = 0.01,

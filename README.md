@@ -57,7 +57,7 @@ head(gwas_example)
 
 
 ## get_loci()
-Determine loci from a GWAS summary statistics file. Use distance from lead significant SNP to estimate independent loci in GWAS summary stats [default distance = 500kb]. By default, the HLA region is treated is one continuous locus due to the complex LD. Uses -log10(p) derived from BETA/SE so does not need P as input. Example below with default input:
+Determine loci from a GWAS summary statistics file. Use distance from lead significant SNP to estimate independent loci in GWAS summary stats [default distance = 500kb]. The HLA region can be treated as one continuous locus by setting `exclude_hla` to TRUE. Uses -log10(p) derived from BETA/SE so does not need P as input. Example below with default input:
 
 
 ```r
