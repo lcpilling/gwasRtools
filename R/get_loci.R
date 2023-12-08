@@ -66,7 +66,7 @@ get_loci = function(gwas,
 )  {
 
 	cat(paste0("\nLocus size (bases) = ", n_bases, "\n"))
-	cat("\nHLA region will be treated as one continuous locus\n\n")
+	if (exclude_hla)  cat("\nHLA region will be treated as one continuous locus\n\n")
 	cat(paste0("P-value threshold = ", p_threshold, "\n\n"))
 	
 	## in case a tibble etc is passed...
