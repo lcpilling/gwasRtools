@@ -1,3 +1,7 @@
+# gwasRtools 0.1.3.9000 (16 Jan 2024)
+
+* `get_loci()` detects BOLT-LMM, SAIGE and REGENIE output automatically. Can be disabled with `detect_headers=FALSE`
+
 # gwasRtools 0.1.3 (27 Nov 2023)
 
 * `get_loci()` now has the option `exclude_hla` to treat the HLA region as one continuous locus (default = FALSE). Coordinates are specified with `hla_pos = c(25e6, 34e6)` [these are the defaults]

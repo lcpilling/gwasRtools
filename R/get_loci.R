@@ -9,6 +9,7 @@
 #' @name get_loci
 #'
 #' @param gwas A data.frame. Contains the GWAS summary statistics.
+#' @param detect_headers Logical. Default=TRUE. Search input headers to see if BOLT-LMM, SAIGE, or REGENIE input (user therefore doesn't need to provide). If BOLT-LMM then automatically use p-value instead of SE.
 #' @param snp_col A string. Default="SNP". The RSID/variantID column name.
 #' @param chr_col A string. Default="CHR". The chromosome column name.
 #' @param pos_col A string. Default="BP". The base pair/position column name.
@@ -37,8 +38,6 @@
 #'
 #' head(gwas_loci[ gwas_loci$lead==TRUE , ])
 #'
-#' # example if GWAS is BOLT-LMM output: gwas_loci = get_loci(gwas, maf_col="A1FREQ", p_col="P_BOLT_LMM", use_pvalue=TRUE)
-#'
 #' @export
 #'
 
@@ -53,6 +52,7 @@ get_loci = function(gwas,
                     p_col           = "NA",
                     neglog10p_col   = "NA",
                     use_pvalue      = FALSE,
+                    detect_headers  = TRUE,
                     n_bases         = 5e5,
                     p_threshold     = 5e-8,
                     exclude_hla     = FALSE,
@@ -66,13 +66,48 @@ get_loci = function(gwas,
 )  {
 
 	cat(paste0("\nLocus size (bases) = ", n_bases, "\n"))
-	if (exclude_hla)  cat("\nHLA region will be treated as one continuous locus\n\n")
 	cat(paste0("P-value threshold = ", p_threshold, "\n\n"))
+	
+	if (exclude_hla)  cat("\nHLA region will be treated as one continuous locus\n\n")
 	
 	## in case a tibble etc is passed...
 	gwas = as.data.frame(gwas)
 	if (verbose)  cat("GWAS has ", nrow(gwas), " variants\n")
-
+	
+	# check headers. Is this BOLT, SAIGE, or REGENIE output? If not, user needs to specify
+	if (detect_headers)  {
+		col_names = colnames(gwas)
+		if ("P_BOLT_LMM" %in% colnames)  {
+			cat("\nDetected BOLT-LMM input. Using default headers. Using p-value to get SEs. Disable with `detect_headers=FALSE`\n\n")
+			snp_col  = "SNP"
+			chr_col  = "CHR"
+			pos_col  = "BP"
+			maf_col  = "MAF"
+			beta_col = "BETA"
+			se_col   = "SE"
+			p_col    = "P_BOLT_LMM"
+			use_pvalue = TRUE
+		}
+		if ("SNPID" %in% colnames & "AF_Allele2" %in% colnames)  {
+			cat("\nDetected SAIGE input. Using default headers. Disable with `detect_headers=FALSE`\n\n")
+			snp_col  = "SNPID"
+			chr_col  = "CHR"
+			pos_col  = "POS"
+			maf_col  = "AF_Allele2"
+			beta_col = "BETA"
+			se_col   = "SE"
+		}
+		if ("ID" %in% colnames & "CHROM" %in% colnames & "GENPOS" %in% colnames)  {
+			cat("\nDetected REGENIE input. Using default headers. Disable with `detect_headers=FALSE`\n\n")
+			snp_col  = "ID"
+			chr_col  = "CHROM"
+			pos_col  = "GENPOS"
+			maf_col  = "A1FREQ"
+			beta_col = "BETA"
+			se_col   = "SE"
+		}
+	}
+	
 	## will use -log10 of the p-value in case any p-values were <5e-324 and are rounded to 0 in many software
 	if (verbose)  cat("Getting -log10 p-value\n")
 	if (!use_pvalue & neglog10p_col != "NA")  gwas[,"P_neglog10"] = gwas[,neglog10p_col]

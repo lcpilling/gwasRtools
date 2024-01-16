@@ -16,6 +16,7 @@ get_loci(
   p_col = "NA",
   neglog10p_col = "NA",
   use_pvalue = FALSE,
+  detect_headers = TRUE,
   n_bases = 5e+05,
   p_threshold = 5e-08,
   exclude_hla = FALSE,
@@ -52,6 +53,8 @@ get_loci(
 
 \item{use_pvalue}{Logical. Default=FALSE. Use the provided p-value (in `p_col`) rather than computing from the test statistic? Useful for BOLT-LMM output}
 
+\item{detect_headers}{Logical. Default=TRUE. Search input headers to see if BOLT-LMM, SAIGE, or REGENIE input (user therefore doesn't need to provide). If BOLT-LMM then automatically use p-value instead of SE.}
+
 \item{n_bases}{An interger. Default=5e5. The distance between two significant loci, beyond which they are defined as in separate loci.}
 
 \item{p_threshold}{A number. Default=5e-8. P-value threshold for statistical significance}
@@ -84,8 +87,6 @@ gwas_loci = get_loci(gwas_example)
 head(gwas_loci)
 
 head(gwas_loci[ gwas_loci$lead==TRUE , ])
-
-# example if GWAS is BOLT-LMM output: gwas_loci = get_loci(gwas, maf_col="A1FREQ", p_col="P_BOLT_LMM", use_pvalue=TRUE)
 
 }
 \author{
