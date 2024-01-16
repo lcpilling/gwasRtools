@@ -77,7 +77,7 @@ get_loci = function(gwas,
 	# check headers. Is this BOLT, SAIGE, or REGENIE output? If not, user needs to specify
 	if (detect_headers)  {
 		col_names = colnames(gwas)
-		if ("P_BOLT_LMM" %in% colnames)  {
+		if ("P_BOLT_LMM" %in% col_names)  {
 			cat("\nDetected BOLT-LMM input. Using default headers. Using p-value to get SEs. Disable with `detect_headers=FALSE`\n\n")
 			snp_col  = "SNP"
 			chr_col  = "CHR"
@@ -88,7 +88,7 @@ get_loci = function(gwas,
 			p_col    = "P_BOLT_LMM"
 			use_pvalue = TRUE
 		}
-		if ("SNPID" %in% colnames & "AF_Allele2" %in% colnames)  {
+		if ("SNPID" %in% col_names & "AF_Allele2" %in% col_names)  {
 			cat("\nDetected SAIGE input. Using default headers. Disable with `detect_headers=FALSE`\n\n")
 			snp_col  = "SNPID"
 			chr_col  = "CHR"
@@ -97,7 +97,7 @@ get_loci = function(gwas,
 			beta_col = "BETA"
 			se_col   = "SE"
 		}
-		if ("ID" %in% colnames & "CHROM" %in% colnames & "GENPOS" %in% colnames)  {
+		if ("ID" %in% col_names & "CHROM" %in% col_names & "GENPOS" %in% col_names)  {
 			cat("\nDetected REGENIE input. Using default headers. Disable with `detect_headers=FALSE`\n\n")
 			snp_col  = "ID"
 			chr_col  = "CHROM"
