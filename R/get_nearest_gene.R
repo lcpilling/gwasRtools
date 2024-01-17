@@ -33,11 +33,11 @@
 # function to get nearest gene from mapped output
 get_nearest_gene = function(variants,
                             detect_headers  = TRUE,
-                            snp_col = "SNP",
-                            chr_col = "CHR",
-                            pos_col = "BP",
-                            build   = 37,
-                            n_bases = 1e5)  {
+                            snp_col         = "SNP",
+                            chr_col         = "CHR",
+                            pos_col         = "BP",
+                            build           = 37,
+                            n_bases         = 1e5)  {
 	
 	# check build input
 	if (! build %in% c(37,38))  stop("Build has to be 37 or 38")

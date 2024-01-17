@@ -22,8 +22,8 @@
 #' @param use_pvalue Logical. Default=FALSE. Use the provided p-value (in `p_col`) rather than computing from the test statistic? Useful for BOLT-LMM output
 #' @param n_bases An interger. Default=5e5. The distance between two significant loci, beyond which they are defined as in separate loci.
 #' @param p_threshold A number. Default=5e-8. P-value threshold for statistical significance
-#' @param hla_locus Logical. Default=FALSE. Treat HLA as one continuous locus
-#' @param hla_pos A numeric vector of length 2. Default=c(25e6, 34e6). The HLA region on chromosome 6 to treat as one continuous locus if `hla_locus==TRUE`
+#' @param single_hla_locus Logical. Default=FALSE. Treat HLA as one continuous locus
+#' @param hla_pos A numeric vector of length 2. Default=c(25e6, 34e6). The HLA region on chromosome 6 to treat as one continuous locus if `single_hla_locus==TRUE`
 #' @param ld_clump Logical. Default=FALSE. [Previously called `get_ld_indep`] Use Plink LD clumping to identify independent SNPs - see ieugwasr::ld_clump() docs. 
 #' @param ld_clump_r2 Numeric. Default=0.01. Pruning threshold for LD.
 #' @param ld_clump_local Logical. Default=TRUE. If clumping using local installation (rather than IEU API) - see ieugwasr::ld_clump() docs
@@ -51,28 +51,28 @@
 #'
 
 get_loci = function(gwas,
-                    detect_headers  = TRUE,
-                    snp_col         = "SNP",
-                    chr_col         = "CHR",
-                    pos_col         = "BP",
-                    maf_col         = "MAF",
-                    beta_col        = "BETA",
-                    se_col          = "SE",
-                    stat_col        = "NA",
-                    p_col           = "NA",
-                    neglog10p_col   = "NA",
-                    use_pvalue      = FALSE,
-                    n_bases         = 5e5,
-                    p_threshold     = 5e-8,
-                    hla_locus       = FALSE,
-                    hla_pos         = c(25e6, 34e6),
-                    ld_clump        = FALSE,
-                    get_ld_indep    = FALSE,
-                    ld_clump_r2     = 0.01,
-                    ld_clump_local  = TRUE,
-                    ld_plink_bin    = "plink",
-                    ld_bfile        = "/indy/ukbiobank/data_14631/genetics/imputed_500k/5k_eur/ukb_imp_v3.qc_sub.5k_eur",
-                    verbose         = FALSE
+                    detect_headers   = TRUE,
+                    snp_col          = "SNP",
+                    chr_col          = "CHR",
+                    pos_col          = "BP",
+                    maf_col          = "MAF",
+                    beta_col         = "BETA",
+                    se_col           = "SE",
+                    stat_col         = "NA",
+                    p_col            = "NA",
+                    neglog10p_col    = "NA",
+                    use_pvalue       = FALSE,
+                    n_bases          = 5e5,
+                    p_threshold      = 5e-8,
+                    single_single_hla_locus = FALSE,
+                    hla_pos          = c(25e6, 34e6),
+                    ld_clump         = FALSE,
+                    get_ld_indep     = FALSE,
+                    ld_clump_r2      = 0.01,
+                    ld_clump_local   = TRUE,
+                    ld_plink_bin     = "plink",
+                    ld_bfile         = "/indy/ukbiobank/data_14631/genetics/imputed_500k/5k_eur/ukb_imp_v3.qc_sub.5k_eur",
+                    verbose          = FALSE
 )  {
 	
 	# using old clump option?
@@ -84,7 +84,7 @@ get_loci = function(gwas,
 	cat(paste0("\nLocus size (bases) = ", n_bases, "\n"))
 	cat(paste0("P-value threshold = ", p_threshold, "\n\n"))
 	
-	if (hla_locus)  cat("HLA region will be treated as one continuous locus\n\n")
+	if (single_hla_locus)  cat("HLA region will be treated as one continuous locus\n\n")
 	
 	## in case a tibble etc is passed...
 	gwas = as.data.frame(gwas)
@@ -177,7 +177,7 @@ get_loci = function(gwas,
 		if (verbose)  cat("Determining loci\n")
 		
 		# treat HLA region as one continuous locus?
-		if (hla_locus)  {
+		if (single_hla_locus)  {
 			gwas_loci_hla = gwas_loci[ gwas_loci[,chr_col]==6 & gwas_loci[,pos_col] > hla_pos[1] & gwas_loci[,pos_col] < hla_pos[2] ,]
 			
 			if (nrow( gwas_loci_hla )>0)  {
@@ -235,7 +235,7 @@ get_loci = function(gwas,
 		} # end CHR loop
 		
 		# treat HLA region as one continuous locus?
-		if (hla_locus)  {
+		if (single_hla_locus)  {
 			
 			if (nrow( gwas_loci_hla )>0)  {
 				
@@ -291,7 +291,7 @@ get_loci = function(gwas,
 			for_clumping = for_clumping[ for_clumping$chr %in% 1:22 , ]
 			
 			# treat HLA region as one continuous locus?
-			if (hla_locus)  {
+			if (single_hla_locus)  {
 				hla_rsids = gwas_loci[ gwas_loci[,chr_col]==6 & gwas_loci[,pos_col] > hla_pos[1] & gwas_loci[,pos_col] < hla_pos[2] , snp_col ]
 				for_clumping = for_clumping[ ! for_clumping$rsid %in% hla_rsids , ]
 			}
@@ -331,7 +331,7 @@ get_loci = function(gwas,
 		cat(paste0("N variants = ", nrow(gwas), "\n"))
 		cat(paste0("N variants p<threshold = ", nrow(gwas_loci), "\n"))
 		cat(paste0("N loci = ", n_loci, "\n"))
-		if (ld_clump) cat(paste0("N independent variants (LD R2 threshold ", ld_clump_r2, ") = ", nrow(gwas_loci[gwas_loci$lead==TRUE,]), "\n\n"))
+		if (ld_clump) cat(paste0("N independent variants (LD R2 threshold ", ld_clump_r2, ") = ", nrow(gwas_loci[gwas_loci$lead==TRUE,]), "\n"))
 
 	}
 	

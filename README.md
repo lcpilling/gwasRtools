@@ -1,8 +1,4 @@
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
-
-
 <img align="right" src="https://raw.githubusercontent.com/lukepilling/gwasRtools/master/images/gwasRtools.png" width="200" />
 
 # gwasRtools
@@ -57,8 +53,7 @@ head(gwas_example)
 
 
 ## get_loci()
-Determine loci from GWAS summary statistics. Use distance from lead significant SNP to estimate independent loci [default distance = 500kb]. The HLA region can be treated as one continuous locus by setting `exclude_hla` to TRUE. Uses -log10(p) derived from BETA/SE so does not need P as input. Example below with default input:
-
+Determine loci from GWAS summary statistics. Use distance from lead significant SNP to estimate independent loci [default distance = 500kb]. Uses -log10(p) derived from BETA/SE so does not need P as input. Example below with default input.
 
 ```r
 gwas_loci = get_loci(gwas_example)
@@ -91,6 +86,8 @@ gwas_loci |> dplyr::filter(lead==TRUE) |> head()
 
  - Loci are numbered. Variants within a locus (i.e., significant below the `p_threshold` and less than `n_bases` from last significant variant).
  - Lead variant for each locus is highlighted where `lead==TRUE` (i.e., smallest p-value for any variant within a locus)
+
+The HLA region can be treated as one continuous locus by setting `single_hla_locus` to TRUE. 
 
 ### Use LD clumping to identify independent SNPs at the same locus 
 
