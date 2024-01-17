@@ -92,7 +92,7 @@ head(gwas_loci)
 head(gwas_loci[ gwas_loci$lead==TRUE , ])
 
 # clump loci using Plink LD pruning
-gwas_loci = get_loci(gwas_example, ld_clump==TRUE)
+gwas_loci = get_loci(gwas_example, ld_clump=TRUE)
 
 head(gwas_loci)
 
