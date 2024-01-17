@@ -9,7 +9,7 @@
 Some useful R functions for processing GWAS output
 
 <!-- badges: start -->
-[![](https://img.shields.io/badge/version-0.1.3.9000-informational.svg)](https://github.com/lukepilling/gwasRtools)
+[![](https://img.shields.io/badge/version-0.1.4-informational.svg)](https://github.com/lukepilling/gwasRtools)
 [![](https://img.shields.io/github/last-commit/lukepilling/gwasRtools.svg)](https://github.com/lukepilling/gwasRtools/commits/master)
 [![](https://img.shields.io/badge/lifecycle-experimental-orange)](https://www.tidyverse.org/lifecycle/#experimental)
 [![DOI](https://zenodo.org/badge/655790727.svg)](https://zenodo.org/badge/latestdoi/655790727)
@@ -57,7 +57,7 @@ head(gwas_example)
 
 
 ## get_loci()
-Determine loci from a GWAS summary statistics file. Use distance from lead significant SNP to estimate independent loci in GWAS summary stats [default distance = 500kb]. The HLA region can be treated as one continuous locus by setting `exclude_hla` to TRUE. Uses -log10(p) derived from BETA/SE so does not need P as input. Example below with default input:
+Determine loci from GWAS summary statistics. Use distance from lead significant SNP to estimate independent loci [default distance = 500kb]. The HLA region can be treated as one continuous locus by setting `exclude_hla` to TRUE. Uses -log10(p) derived from BETA/SE so does not need P as input. Example below with default input:
 
 
 ```r
@@ -94,13 +94,13 @@ gwas_loci |> dplyr::filter(lead==TRUE) |> head()
 
 ### Use LD clumping to identify independent SNPs at the same locus 
 
-Setting option `get_ld_indep=TRUE` will use {[ieugwasr](https://github.com/MRCIEU/ieugwasr)} package `ld_clump()` function to run Plink LD clumping. 
+Setting option `ld_clump=TRUE` will use {[ieugwasr](https://github.com/MRCIEU/ieugwasr)} package `ld_clump()` function to run Plink LD clumping. 
 
 Default is to use a local Plink installation (this is faster) with EUR reference panel. But setting option `ld_clump_local` to FALSE will use the online IEU API. See the {ieugwasr} docs for details. Default R2 threshold for LD pruning is 0.01 (modify with `ld_pruning_r2` option). 
 
 
 ```r
-gwas_loci = get_loci(gwas_example, get_ld_indep=TRUE)
+gwas_loci = get_loci(gwas_example, ld_clump=TRUE)
 #> ** Performing LD clumping. Can take a few minutes
 #> ** Local Plink installation will be called -- output appears in your R terminal
 #> 

@@ -4,9 +4,7 @@
 #'
 #' @return Returns a data frame of variant IDs mapped to genes (with distance). 
 #'
-#' - If `dist` is positive, the variant is intergenic, and this is the distance to the closest gene.
-#' - If `dist` is negative, the variant is within a gene, and this is the distance to the start of the gene.
-#' - If `dist` is NA, the variant is not within `n_bases` of a gene in GENCODE.
+#' If `dist` is positive, the variant is intergenic, and this is the distance to the closest gene. If `dist` is negative, the variant is within a gene, and this is the distance to the start of the gene. If `dist` is NA, the variant is not within `n_bases` of a gene in GENCODE.
 #'
 #' @author Luke Pilling
 #'
@@ -48,13 +46,13 @@ get_nearest_gene = function(variants,
 	col_names = colnames(variants)
 	if (detect_headers)  {
 		if ("SNPID" %in% col_names & "CHR" %in% col_names & "POS" %in% col_names)  {
-			cat("Detected SAIGE input. Using default headers. Disable with `detect_headers=FALSE`\n\n")
+			cat("\nDetected SAIGE input. Using default headers. Disable with `detect_headers=FALSE`\n")
 			snp_col  = "SNPID"
 			chr_col  = "CHR"
 			pos_col  = "POS"
 		}
 		if ("ID" %in% col_names & "CHROM" %in% col_names & "GENPOS" %in% col_names)  {
-			cat("Detected REGENIE input. Using default headers. Disable with `detect_headers=FALSE`\n\n")
+			cat("\nDetected REGENIE input. Using default headers. Disable with `detect_headers=FALSE`\n")
 			snp_col  = "ID"
 			chr_col  = "CHROM"
 			pos_col  = "GENPOS"

@@ -32,9 +32,7 @@ get_nearest_gene(
 \value{
 Returns a data frame of variant IDs mapped to genes (with distance). 
 
-- If `dist` is positive, the variant is intergenic, and this is the distance to the closest gene.
-- If `dist` is negative, the variant is within a gene, and this is the distance to the start of the gene.
-- If `dist` is NA, the variant is not within `n_bases` of a gene in GENCODE.
+If `dist` is positive, the variant is intergenic, and this is the distance to the closest gene. If `dist` is negative, the variant is within a gene, and this is the distance to the start of the gene. If `dist` is NA, the variant is not within `n_bases` of a gene in GENCODE.
 }
 \description{
 Use distance variant position to get the nearest gene. Uses {snpsettest} function `map_snp_to_gene` to identify genes from GENCODE databases (https://github.com/HimesGroup/snpsettest).

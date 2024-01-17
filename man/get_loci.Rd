@@ -19,10 +19,11 @@ get_loci(
   use_pvalue = FALSE,
   n_bases = 5e+05,
   p_threshold = 5e-08,
-  exclude_hla = FALSE,
+  hla_locus = FALSE,
   hla_pos = c(2.5e+07, 3.4e+07),
+  ld_clump = FALSE,
   get_ld_indep = FALSE,
-  ld_pruning_r2 = 0.01,
+  ld_clump_r2 = 0.01,
   ld_clump_local = TRUE,
   ld_plink_bin = "plink",
   ld_bfile =
@@ -59,13 +60,13 @@ get_loci(
 
 \item{p_threshold}{A number. Default=5e-8. P-value threshold for statistical significance}
 
-\item{exclude_hla}{Logical. Default=FALSE. Treat HLA as one continuous locus}
+\item{hla_locus}{Logical. Default=FALSE. Treat HLA as one continuous locus}
 
-\item{hla_pos}{A numeric vector of length 2. Default=c(25e6, 34e6). The HLA region on chromosome 6 to treat as one continuous locus if `exclude_hla==TRUE`}
+\item{hla_pos}{A numeric vector of length 2. Default=c(25e6, 34e6). The HLA region on chromosome 6 to treat as one continuous locus if `hla_locus==TRUE`}
 
-\item{get_ld_indep}{Logical. Default=FALSE. Use Plink LD clumping to identify independent SNPs - see ieugwasr::ld_clump() docs}
+\item{ld_clump}{Logical. Default=FALSE. [Previously called `get_ld_indep`] Use Plink LD clumping to identify independent SNPs - see ieugwasr::ld_clump() docs.}
 
-\item{ld_pruning_r2}{Numeric. Default=0.01. Pruning threshold for LD.}
+\item{ld_clump_r2}{Numeric. Default=0.01. Pruning threshold for LD.}
 
 \item{ld_clump_local}{Logical. Default=TRUE. If clumping using local installation (rather than IEU API) - see ieugwasr::ld_clump() docs}
 
@@ -82,7 +83,16 @@ Returns a data frame of significant SNPs with locus annotation
 Use distance from lead significant SNP to estimate independet loci in GWAS summary stats. Uses -log10(p) derived from BETA/SE so does not need P as input.
 }
 \examples{
+
+# distance-based loci
 gwas_loci = get_loci(gwas_example)
+
+head(gwas_loci)
+
+head(gwas_loci[ gwas_loci$lead==TRUE , ])
+
+# clump loci using Plink LD pruning
+gwas_loci = get_loci(gwas_example, ld_clump==TRUE)
 
 head(gwas_loci)
 
