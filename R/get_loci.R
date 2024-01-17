@@ -42,6 +42,7 @@
 #'
 
 get_loci = function(gwas,
+                    detect_headers  = TRUE,
                     snp_col         = "SNP",
                     chr_col         = "CHR",
                     pos_col         = "BP",
@@ -52,7 +53,6 @@ get_loci = function(gwas,
                     p_col           = "NA",
                     neglog10p_col   = "NA",
                     use_pvalue      = FALSE,
-                    detect_headers  = TRUE,
                     n_bases         = 5e5,
                     p_threshold     = 5e-8,
                     exclude_hla     = FALSE,

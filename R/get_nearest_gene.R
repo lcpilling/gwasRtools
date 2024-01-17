@@ -2,13 +2,18 @@
 #'
 #' @description Use distance variant position to get the nearest gene. Uses {snpsettest} function `map_snp_to_gene` to identify genes from GENCODE databases (https://github.com/HimesGroup/snpsettest).
 #'
-#' @return Returns a data frame of variant IDs mapped to genes (with distance)
+#' @return Returns a data frame of variant IDs mapped to genes (with distance). 
+#'
+#' - If `dist` is positive, the variant is intergenic, and this is the distance to the closest gene.
+#' - If `dist` is negative, the variant is within a gene, and this is the distance to the start of the gene.
+#' - If `dist` is NA, the variant is not within `n_bases` of a gene in GENCODE.
 #'
 #' @author Luke Pilling
 #'
 #' @name get_nearest_gene
 #'
 #' @param variants A data.frame. Contains the variants (e.g., in summary statistics).
+#' @param detect_headers Logical. Default=TRUE. Search input headers to see if BOLT-LMM, SAIGE, or REGENIE input (user therefore doesn't need to provide). 
 #' @param snp_col A string. Default="SNP". The RSID/variantID column name.
 #' @param chr_col A string. Default="CHR". The chromosome column name.
 #' @param pos_col A string. Default="BP". The base pair/position column name.
@@ -29,17 +34,37 @@
 
 # function to get nearest gene from mapped output
 get_nearest_gene = function(variants,
+                            detect_headers  = TRUE,
                             snp_col = "SNP",
                             chr_col = "CHR",
                             pos_col = "BP",
                             build   = 37,
                             n_bases = 1e5)  {
 	
-	# check input
+	# check build input
 	if (! build %in% c(37,38))  stop("Build has to be 37 or 38")
-	if (! snp_col %in% colnames(variants)) stop(paste0("`snp_col` \"", snp_col, "\" not in provided data frame"))
-	if (! chr_col %in% colnames(variants)) stop(paste0("`chr_col` \"", chr_col, "\" not in provided data frame"))
-	if (! pos_col %in% colnames(variants)) stop(paste0("`pos_col` \"", pos_col, "\" not in provided data frame"))
+	
+	# check headers. Default is BOLT-LMM. Is this SAIGE, or REGENIE output? If not, user needs to specify
+	col_names = colnames(variants)
+	if (detect_headers)  {
+		if ("SNPID" %in% col_names & "CHR" %in% col_names & "POS" %in% col_names)  {
+			cat("Detected SAIGE input. Using default headers. Disable with `detect_headers=FALSE`\n\n")
+			snp_col  = "SNPID"
+			chr_col  = "CHR"
+			pos_col  = "POS"
+		}
+		if ("ID" %in% col_names & "CHROM" %in% col_names & "GENPOS" %in% col_names)  {
+			cat("Detected REGENIE input. Using default headers. Disable with `detect_headers=FALSE`\n\n")
+			snp_col  = "ID"
+			chr_col  = "CHROM"
+			pos_col  = "GENPOS"
+		}
+	}
+	
+	# check headers
+	if (! snp_col %in% col_names) stop(paste0("`snp_col` \"", snp_col, "\" not in provided data frame"))
+	if (! chr_col %in% col_names) stop(paste0("`chr_col` \"", chr_col, "\" not in provided data frame"))
+	if (! pos_col %in% col_names) stop(paste0("`pos_col` \"", pos_col, "\" not in provided data frame"))
 	
 	# get gene list
 	gene_curated = snpsettest::gene.curated.GRCh37
@@ -80,11 +105,13 @@ get_nearest_gene = function(variants,
 			TRUE ~ NA_real_))
 	
 	# use `map` from {purrr} to make this quick and easy
-	map2 = purrr::map(unique(map$id), \(id) gwasRtools:::get_nearest_gene1(id, map)) |> purrr::list_rbind()
+	map2 = purrr::map(unique(map$id), \(id) gwasRtools:::get_nearest_gene1(id, map)) |> 
+		purrr::list_rbind() |> 
+		dplyr::select(id, gene, dist)
 	
 	# merge original variants file with genes 
 	variants = variants |> dplyr::mutate(ID=!! rlang::sym(snp_col))
-	variants = dplyr::left_join(variants, map2 |> dplyr::select(id, gene, dist), by=c("ID"="id"))
+	variants = dplyr::left_join(variants, map2, by=c("ID"="id"))
 	variants = variants |> dplyr::select(-ID)
 	
 	# return 

@@ -6,6 +6,7 @@
 \usage{
 get_nearest_gene(
   variants,
+  detect_headers = TRUE,
   snp_col = "SNP",
   chr_col = "CHR",
   pos_col = "BP",
@@ -15,6 +16,8 @@ get_nearest_gene(
 }
 \arguments{
 \item{variants}{A data.frame. Contains the variants (e.g., in summary statistics).}
+
+\item{detect_headers}{Logical. Default=TRUE. Search input headers to see if BOLT-LMM, SAIGE, or REGENIE input (user therefore doesn't need to provide).}
 
 \item{snp_col}{A string. Default="SNP". The RSID/variantID column name.}
 
@@ -27,7 +30,11 @@ get_nearest_gene(
 \item{n_bases}{An interger. Default=1e5. The max distance in base-pairs between a variant and a gene to annotate}
 }
 \value{
-Returns a data frame of variant IDs mapped to genes (with distance)
+Returns a data frame of variant IDs mapped to genes (with distance). 
+
+- If `dist` is positive, the variant is intergenic, and this is the distance to the closest gene.
+- If `dist` is negative, the variant is within a gene, and this is the distance to the start of the gene.
+- If `dist` is NA, the variant is not within `n_bases` of a gene in GENCODE.
 }
 \description{
 Use distance variant position to get the nearest gene. Uses {snpsettest} function `map_snp_to_gene` to identify genes from GENCODE databases (https://github.com/HimesGroup/snpsettest).

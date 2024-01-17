@@ -28,14 +28,14 @@ To install the development version from GitHub use the `remotes` package:
 remotes::install_github("lukepilling/gwasRtools")
 ```
 
-I periodically "release" a version number once it works as expected. The development version may contain things that do not yet "work."
+The development version may not "work." Install a "release" version if needed. 
 
 ```r
 # To install the latest release, use:
 remotes::install_github("lukepilling/gwasRtools@*release")
 
 # To install a specific version (see tags), use:
-remotes::install_github("lukepilling/gwasRtools@v0.1.2")
+remotes::install_github("lukepilling/gwasRtools@v0.1.3")
 ```
 
 

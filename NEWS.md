@@ -1,6 +1,6 @@
 # gwasRtools 0.1.3.9000 (16 Jan 2024)
 
-* `get_loci()` detects BOLT-LMM, SAIGE and REGENIE output automatically. Can be disabled with `detect_headers=FALSE`
+* `get_loci()` and `get_nearest_gene()` detect BOLT-LMM, SAIGE and REGENIE input automatically. Can be disabled with `detect_headers=FALSE`
 
 # gwasRtools 0.1.3 (27 Nov 2023)
 

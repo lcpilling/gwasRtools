@@ -6,6 +6,7 @@
 \usage{
 get_loci(
   gwas,
+  detect_headers = TRUE,
   snp_col = "SNP",
   chr_col = "CHR",
   pos_col = "BP",
@@ -16,7 +17,6 @@ get_loci(
   p_col = "NA",
   neglog10p_col = "NA",
   use_pvalue = FALSE,
-  detect_headers = TRUE,
   n_bases = 5e+05,
   p_threshold = 5e-08,
   exclude_hla = FALSE,
@@ -32,6 +32,8 @@ get_loci(
 }
 \arguments{
 \item{gwas}{A data.frame. Contains the GWAS summary statistics.}
+
+\item{detect_headers}{Logical. Default=TRUE. Search input headers to see if BOLT-LMM, SAIGE, or REGENIE input (user therefore doesn't need to provide). If BOLT-LMM then automatically use p-value instead of SE.}
 
 \item{snp_col}{A string. Default="SNP". The RSID/variantID column name.}
 
@@ -52,8 +54,6 @@ get_loci(
 \item{neglog10p_col}{A string. Default="NA". The -log10 p-value column name. (Only required if not providing beta+se, or stat)}
 
 \item{use_pvalue}{Logical. Default=FALSE. Use the provided p-value (in `p_col`) rather than computing from the test statistic? Useful for BOLT-LMM output}
-
-\item{detect_headers}{Logical. Default=TRUE. Search input headers to see if BOLT-LMM, SAIGE, or REGENIE input (user therefore doesn't need to provide). If BOLT-LMM then automatically use p-value instead of SE.}
 
 \item{n_bases}{An interger. Default=5e5. The distance between two significant loci, beyond which they are defined as in separate loci.}
 
