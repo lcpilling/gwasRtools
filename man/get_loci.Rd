@@ -19,7 +19,7 @@ get_loci(
   use_pvalue = FALSE,
   n_bases = 5e+05,
   p_threshold = 5e-08,
-  hla_locus = FALSE,
+  single_single_hla_locus = FALSE,
   hla_pos = c(2.5e+07, 3.4e+07),
   ld_clump = FALSE,
   get_ld_indep = FALSE,
@@ -60,9 +60,7 @@ get_loci(
 
 \item{p_threshold}{A number. Default=5e-8. P-value threshold for statistical significance}
 
-\item{hla_locus}{Logical. Default=FALSE. Treat HLA as one continuous locus}
-
-\item{hla_pos}{A numeric vector of length 2. Default=c(25e6, 34e6). The HLA region on chromosome 6 to treat as one continuous locus if `hla_locus==TRUE`}
+\item{hla_pos}{A numeric vector of length 2. Default=c(25e6, 34e6). The HLA region on chromosome 6 to treat as one continuous locus if `single_hla_locus==TRUE`}
 
 \item{ld_clump}{Logical. Default=FALSE. [Previously called `get_ld_indep`] Use Plink LD clumping to identify independent SNPs - see ieugwasr::ld_clump() docs.}
 
@@ -75,6 +73,8 @@ get_loci(
 \item{ld_bfile}{A string. Default is to 5,000 random unrelated UK Biobank Europeans on my server :) needs a path to appropriate BIM/BED reference panel files on your server}
 
 \item{verbose}{Logical. Default=FALSE. Be verbose}
+
+\item{single_hla_locus}{Logical. Default=FALSE. Treat HLA as one continuous locus}
 }
 \value{
 Returns a data frame of significant SNPs with locus annotation
