@@ -1,3 +1,8 @@
+# gwasRtools 0.1.4.9000 (7 Feb 2024)
+
+* Change how functions detect SAIGE input
+
+
 # gwasRtools 0.1.4 (17 Jan 2024)
 
 ## Updates

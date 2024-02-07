@@ -104,9 +104,10 @@ get_loci = function(gwas,
 			p_col    = "P_BOLT_LMM"
 			use_pvalue = TRUE
 		}
-		if ("SNPID" %in% col_names & "AF_Allele2" %in% col_names)  {
+		if ("AF_Allele2" %in% col_names)  {
 			cat("Detected SAIGE input. Using default headers. Disable with `detect_headers=FALSE`\n\n")
-			snp_col  = "SNPID"
+			snp_col  = "MarkerID"
+			if ("SNPID" %in% col_names)  snp_col  = "SNPID"
 			chr_col  = "CHR"
 			pos_col  = "POS"
 			maf_col  = "AF_Allele2"
