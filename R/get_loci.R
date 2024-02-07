@@ -77,7 +77,6 @@ get_loci = function(gwas,
 	
 	# using old clump option?
 	if (lifecycle::is_present(get_ld_indep))  {
-		warning("Option `get_ld_indep` is being depreciated. Use `ld_clump` instead.")
 		lifecycle::deprecate_warn("0.1.4", "get_loci(get_ld_indep)", "get_loci(ld_clump)")
 		ld_clump = TRUE 
 	}
