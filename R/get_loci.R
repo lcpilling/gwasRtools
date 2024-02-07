@@ -67,7 +67,7 @@ get_loci = function(gwas,
                     single_hla_locus = FALSE,
                     hla_pos          = c(25e6, 34e6),
                     ld_clump         = FALSE,
-                    get_ld_indep     = FALSE,
+                    get_ld_indep     = lifecycle::deprecated(),
                     ld_clump_r2      = 0.01,
                     ld_clump_local   = TRUE,
                     ld_plink_bin     = "plink",
@@ -76,8 +76,9 @@ get_loci = function(gwas,
 )  {
 	
 	# using old clump option?
-	if (get_ld_indep)  {
+	if (lifecycle::is_present(get_ld_indep))  {
 		warning("Option `get_ld_indep` is being depreciated. Use `ld_clump` instead.")
+		lifecycle::deprecate_warn("0.1.4", "get_loci(get_ld_indep)", "get_loci(ld_clump)")
 		ld_clump = TRUE 
 	}
 	
