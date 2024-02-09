@@ -45,11 +45,14 @@ get_nearest_gene = function(variants,
 	# check headers. Default is BOLT-LMM. Is this SAIGE, or REGENIE output? If not, user needs to specify
 	col_names = colnames(variants)
 	if (detect_headers)  {
-		if ("SNPID" %in% col_names & "CHR" %in% col_names & "POS" %in% col_names)  {
-			cat("\nDetected SAIGE input. Using default headers. Disable with `detect_headers=FALSE`\n")
-			snp_col  = "SNPID"
-			chr_col  = "CHR"
-			pos_col  = "POS"
+		if ("CHR" %in% col_names & "POS" %in% col_names)  {
+			if ("MarkerID" %in% col_names | "SNPID" %in% col_names)  {
+				cat("\nDetected SAIGE input. Using default headers. Disable with `detect_headers=FALSE`\n")
+				snp_col  = "MarkerID"
+				if ("SNPID" %in% col_names)  snp_col  = "SNPID"
+				chr_col  = "CHR"
+				pos_col  = "POS"
+			}
 		}
 		if ("ID" %in% col_names & "CHROM" %in% col_names & "GENPOS" %in% col_names)  {
 			cat("\nDetected REGENIE input. Using default headers. Disable with `detect_headers=FALSE`\n")
