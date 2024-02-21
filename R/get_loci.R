@@ -67,12 +67,12 @@ get_loci = function(gwas,
                     single_hla_locus = FALSE,
                     hla_pos          = c(25e6, 34e6),
                     ld_clump         = FALSE,
-                    get_ld_indep     = lifecycle::deprecated(),
                     ld_clump_r2      = 0.01,
                     ld_clump_local   = TRUE,
                     ld_plink_bin     = "plink",
                     ld_bfile         = "/indy/ukbiobank/data_14631/genetics/imputed_500k/5k_eur/ukb_imp_v3.qc_sub.5k_eur",
-                    verbose          = FALSE
+                    verbose          = FALSE,
+                    get_ld_indep     = lifecycle::deprecated()
 )  {
 	
 	# using old clump option?
