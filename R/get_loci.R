@@ -22,9 +22,9 @@
 #' @param use_pvalue Logical. Default=FALSE. Use the provided p-value (in `p_col`) rather than computing from the test statistic? Useful for BOLT-LMM output
 #' @param n_bases An interger. Default=5e5. The distance between two significant loci, beyond which they are defined as in separate loci.
 #' @param p_threshold A number. Default=5e-8. P-value threshold for statistical significance
-#' @param single_hla_locus Logical. Default=FALSE. Treat HLA as one continuous locus
+#' @param single_hla_locus Logical. Default=FALSE. Treat HLA as one continuous locus. [Previously called `exclude_hla`]
 #' @param hla_pos A numeric vector of length 2. Default=c(25e6, 34e6). The HLA region on chromosome 6 to treat as one continuous locus if `single_hla_locus==TRUE`
-#' @param ld_clump Logical. Default=FALSE. [Previously called `get_ld_indep`] Use Plink LD clumping to identify independent SNPs - see ieugwasr::ld_clump() docs. 
+#' @param ld_clump Logical. Default=FALSE. Use Plink LD clumping to identify independent SNPs - see ieugwasr::ld_clump() docs. [Previously called `get_ld_indep`]
 #' @param ld_clump_r2 Numeric. Default=0.01. Pruning threshold for LD.
 #' @param ld_clump_local Logical. Default=TRUE. If clumping using local installation (rather than IEU API) - see ieugwasr::ld_clump() docs
 #' @param ld_plink_bin A string. Default="plink". Path to Plink v1.90 binary
@@ -72,15 +72,21 @@ get_loci = function(gwas,
                     ld_plink_bin     = "plink",
                     ld_bfile         = "/indy/ukbiobank/data_14631/genetics/imputed_500k/5k_eur/ukb_imp_v3.qc_sub.5k_eur",
                     verbose          = FALSE,
+                    exclude_hla      = lifecycle::deprecated(),
                     get_ld_indep     = lifecycle::deprecated()
 )  {
 	
-	# using old clump option?
+	# using old options?
+	if (lifecycle::is_present(exclude_hla))  {
+		lifecycle::deprecate_warn("0.1.4", "get_loci(exclude_hla)", "get_loci(single_hla_locus)")
+		single_hla_locus = TRUE 
+	}
 	if (lifecycle::is_present(get_ld_indep))  {
 		lifecycle::deprecate_warn("0.1.4", "get_loci(get_ld_indep)", "get_loci(ld_clump)")
 		ld_clump = TRUE 
 	}
 	
+	# print info
 	cat(paste0("\nLocus size (bases) = ", n_bases, "\n"))
 	cat(paste0("P-value threshold = ", p_threshold, "\n\n"))
 	
