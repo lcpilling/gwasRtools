@@ -22,13 +22,15 @@ get_loci(
   single_hla_locus = FALSE,
   hla_pos = c(2.5e+07, 3.4e+07),
   ld_clump = FALSE,
-  get_ld_indep = FALSE,
   ld_clump_r2 = 0.01,
   ld_clump_local = TRUE,
   ld_plink_bin = "plink",
   ld_bfile =
     "/indy/ukbiobank/data_14631/genetics/imputed_500k/5k_eur/ukb_imp_v3.qc_sub.5k_eur",
-  verbose = FALSE
+  verbose = FALSE,
+  exclude_hla = lifecycle::deprecated(),
+  get_ld_indep = lifecycle::deprecated(),
+  ld_pruning_r2 = lifecycle::deprecated()
 )
 }
 \arguments{
@@ -60,13 +62,13 @@ get_loci(
 
 \item{p_threshold}{A number. Default=5e-8. P-value threshold for statistical significance}
 
-\item{single_hla_locus}{Logical. Default=FALSE. Treat HLA as one continuous locus}
+\item{single_hla_locus}{Logical. Default=FALSE. Treat HLA as one continuous locus. [Previously called `exclude_hla`]}
 
 \item{hla_pos}{A numeric vector of length 2. Default=c(25e6, 34e6). The HLA region on chromosome 6 to treat as one continuous locus if `single_hla_locus==TRUE`}
 
-\item{ld_clump}{Logical. Default=FALSE. [Previously called `get_ld_indep`] Use Plink LD clumping to identify independent SNPs - see ieugwasr::ld_clump() docs.}
+\item{ld_clump}{Logical. Default=FALSE. Use Plink LD clumping to identify independent SNPs - see ieugwasr::ld_clump() docs. [Previously called `get_ld_indep`]}
 
-\item{ld_clump_r2}{Numeric. Default=0.01. Pruning threshold for LD.}
+\item{ld_clump_r2}{Numeric. Default=0.01. Pruning threshold for LD. [Previously called `ld_pruning_r2`]}
 
 \item{ld_clump_local}{Logical. Default=TRUE. If clumping using local installation (rather than IEU API) - see ieugwasr::ld_clump() docs}
 

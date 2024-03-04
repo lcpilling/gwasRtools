@@ -25,7 +25,7 @@
 #' @param single_hla_locus Logical. Default=FALSE. Treat HLA as one continuous locus. [Previously called `exclude_hla`]
 #' @param hla_pos A numeric vector of length 2. Default=c(25e6, 34e6). The HLA region on chromosome 6 to treat as one continuous locus if `single_hla_locus==TRUE`
 #' @param ld_clump Logical. Default=FALSE. Use Plink LD clumping to identify independent SNPs - see ieugwasr::ld_clump() docs. [Previously called `get_ld_indep`]
-#' @param ld_clump_r2 Numeric. Default=0.01. Pruning threshold for LD.
+#' @param ld_clump_r2 Numeric. Default=0.01. Pruning threshold for LD. [Previously called `ld_pruning_r2`]
 #' @param ld_clump_local Logical. Default=TRUE. If clumping using local installation (rather than IEU API) - see ieugwasr::ld_clump() docs
 #' @param ld_plink_bin A string. Default="plink". Path to Plink v1.90 binary
 #' @param ld_bfile A string. Default is to 5,000 random unrelated UK Biobank Europeans on my server :) needs a path to appropriate BIM/BED reference panel files on your server
