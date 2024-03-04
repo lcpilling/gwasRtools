@@ -73,7 +73,8 @@ get_loci = function(gwas,
                     ld_bfile         = "/indy/ukbiobank/data_14631/genetics/imputed_500k/5k_eur/ukb_imp_v3.qc_sub.5k_eur",
                     verbose          = FALSE,
                     exclude_hla      = lifecycle::deprecated(),
-                    get_ld_indep     = lifecycle::deprecated()
+                    get_ld_indep     = lifecycle::deprecated(),
+                    ld_pruning_r2    = lifecycle::deprecated()
 )  {
 	
 	# using old options?
@@ -84,6 +85,10 @@ get_loci = function(gwas,
 	if (lifecycle::is_present(get_ld_indep))  {
 		lifecycle::deprecate_warn("0.1.4", "get_loci(get_ld_indep)", "get_loci(ld_clump)")
 		ld_clump = TRUE 
+	}
+	if (lifecycle::is_present(ld_pruning_r2))  {
+		lifecycle::deprecate_warn("0.1.4", "get_loci(ld_pruning_r2)", "get_loci(ld_clump_r2)")
+		ld_clump_r2 = TRUE 
 	}
 	
 	# print info
