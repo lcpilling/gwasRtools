@@ -1,7 +1,6 @@
 
-<img align="right" src="https://raw.githubusercontent.com/lukepilling/gwasRtools/master/images/gwasRtools.png" width="200" />
+# gwasRtools <a href="[https://dplyr.tidyverse.org](https://lukepilling.github.io/gwasRtools/)"><img align="right" src="https://raw.githubusercontent.com/lukepilling/gwasRtools/master/images/gwasRtools.png" width="150" /></a>
 
-# gwasRtools
 Some useful R functions for processing GWAS output
 
 <!-- badges: start -->
