@@ -1,5 +1,5 @@
 
-# gwasRtools <a href="[https://lukepilling.github.io/gwasRtools/](https://lukepilling.github.io/gwasRtools/)"><img align="right" src="https://raw.githubusercontent.com/lukepilling/gwasRtools/master/images/gwasRtools.png" width="150" /></a>
+# gwasRtools <a href="https://lukepilling.github.io/gwasRtools/"><img src="images/gwasRtools.png" align="right" width="150" /></a>
 
 Some useful R functions for processing GWAS output
 
