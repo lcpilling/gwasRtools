@@ -1,4 +1,4 @@
-# gwasRtools 0.1.4.9000 (4 March 2024)
+# gwasRtools 0.1.5 (6 March 2024)
 
 * Change how functions detect SAIGE input
 * Added warnings for depreciated options in `get_loci()`
