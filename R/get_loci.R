@@ -295,7 +295,7 @@ get_loci = function(gwas,
 			# get RSID, chr and p-value for ld_clump()
 			for_clumping = data.frame(
 				rsid = gwas_loci[,snp_col],
-				chr  = gwas_loci[,chr_col],
+				chr  = gwas_loci[,chr_col]
 			)
 			
 			# use provided p-value? Or derive?
