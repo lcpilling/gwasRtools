@@ -1,3 +1,8 @@
+# gwasRtools 0.1.5.9000 (13 March 2024)
+
+* `get_loci()` -- update errors and use p-value if provided
+
+
 # gwasRtools 0.1.5 (6 March 2024)
 
 * Change how functions detect SAIGE input

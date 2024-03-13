@@ -296,8 +296,14 @@ get_loci = function(gwas,
 			for_clumping = data.frame(
 				rsid = gwas_loci[,snp_col],
 				chr  = gwas_loci[,chr_col],
-				pval = 2*pnorm(-abs(gwas_loci[,beta_col]/gwas_loci[,se_col]))
 			)
+			
+			# use provided p-value? Or derive?
+			if (use_pvalue)  {
+				for_clumping$pval = gwas_loci[,p_col]
+			}  else  {
+				for_clumping$pval = 2*pnorm(-abs(gwas_loci[,beta_col]/gwas_loci[,se_col]))
+			}
 			
 			# no X or Y for clumping step
 			for_clumping = for_clumping[ for_clumping$chr %in% 1:22 , ]
