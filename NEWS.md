@@ -1,4 +1,4 @@
-# gwasRtools 0.1.5.9000 (13 March 2024)
+# gwasRtools 0.1.6 (20 April 2024)
 
 * `get_loci()` -- update errors and use p-value if provided
 

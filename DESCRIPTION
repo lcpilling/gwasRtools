@@ -1,6 +1,6 @@
 Package: gwasRtools
 Title: Some useful R functions for processing GWAS output
-Version: 0.1.5.9000
+Version: 0.1.6
 Authors@R: c(person("Luke", "Pilling", 
                     email = "L.Pilling@exeter.ac.uk", 
                     role = c("aut", "cre"),

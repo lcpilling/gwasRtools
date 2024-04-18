@@ -4,7 +4,7 @@
 Some useful R functions for processing GWAS output
 
 <!-- badges: start -->
-[![](https://img.shields.io/badge/version-0.1.5-informational.svg)](https://github.com/lukepilling/gwasRtools)
+[![](https://img.shields.io/badge/version-0.1.6-informational.svg)](https://github.com/lukepilling/gwasRtools)
 [![](https://img.shields.io/github/last-commit/lukepilling/gwasRtools.svg)](https://github.com/lukepilling/gwasRtools/commits/master)
 [![](https://img.shields.io/badge/lifecycle-experimental-orange)](https://www.tidyverse.org/lifecycle/#experimental)
 [![DOI](https://zenodo.org/badge/655790727.svg)](https://zenodo.org/badge/latestdoi/655790727)
@@ -65,22 +65,22 @@ gwas_loci = get_loci(gwas_example)
 #> N loci = 15
 
 head(gwas_loci)
-#>               SNP CHR        BP   A1 A2   MAF       BETA         SE        P locus  lead
-#> 57882  rs12046439   1 107536799    T  C 0.248 0.00997159 0.00170546 5.01e-09     1 FALSE
-#> 57900 rs143849791   1 107537916 CATG  C 0.325 0.01283200 0.00164361 5.85e-15     1 FALSE
-#> 57922 rs113329442   1 107539252    A  G 0.330 0.01109240 0.00149706 1.27e-13     1 FALSE
-#> 57987   rs3861909   1 107544176    G  A 0.327 0.01187220 0.00150837 3.52e-15     1 FALSE
-#> 58025  rs17496332   1 107546375    A  G 0.331 0.01110260 0.00148844 8.70e-14     1 FALSE
-#> 58091   rs2878349   1 107549245    G  A 0.327 0.01182020 0.00149200 2.33e-15     1 FALSE
+#>               SNP CHR        BP   A1 A2   MAF   BETA     SE        P locus  lead
+#> 57882  rs12046439   1 107536799    T  C 0.248 0.0099 0.0017 5.01e-09     1 FALSE
+#> 57900 rs143849791   1 107537916 CATG  C 0.325 0.0128 0.0016 5.85e-15     1 FALSE
+#> 57922 rs113329442   1 107539252    A  G 0.330 0.0110 0.0014 1.27e-13     1 FALSE
+#> 57987   rs3861909   1 107544176    G  A 0.327 0.0118 0.0015 3.52e-15     1 FALSE
+#> 58025  rs17496332   1 107546375    A  G 0.331 0.0111 0.0014 8.70e-14     1 FALSE
+#> 58091   rs2878349   1 107549245    G  A 0.327 0.0118 0.0014 2.33e-15     1 FALSE
 
 gwas_loci |> dplyr::filter(lead==TRUE) |> head()
-#>           SNP CHR        BP A1 A2     MAF        BETA         SE         P locus lead
-#> 1 rs111232683   1 107566149  G  C 0.34300  0.01352040 0.00161401  5.43e-17     1 TRUE
-#> 2 rs114254196   1 108635400  C  T 0.00848 -0.04481140 0.00818473  4.38e-08     2 TRUE
-#> 3 rs115292790   1 109310728  G  A 0.01360 -0.05639270 0.00608890  2.01e-20     3 TRUE
-#> 4  rs12740374   1 109817590  G  T 0.21900 -0.14822800 0.00166391 4.73e-305     4 TRUE
-#> 5 rs140266316   1 110326545  G  A 0.01630 -0.05770880 0.00597770  4.73e-22     5 TRUE
-#> 6    rs657801   1 111736389  T  C 0.31500  0.00905412 0.00150713  1.88e-09     6 TRUE
+#>           SNP CHR        BP A1 A2   MAF    BETA     SE         P locus lead
+#> 1 rs111232683   1 107566149  G  C 0.343  0.0135 0.0016  5.43e-17     1 TRUE
+#> 2 rs114254196   1 108635400  C  T 0.008 -0.0448 0.0081  4.38e-08     2 TRUE
+#> 3 rs115292790   1 109310728  G  A 0.013 -0.0563 0.0060  2.01e-20     3 TRUE
+#> 4  rs12740374   1 109817590  G  T 0.219 -0.1482 0.0016 4.73e-305     4 TRUE
+#> 5 rs140266316   1 110326545  G  A 0.016 -0.0577 0.0059  4.73e-22     5 TRUE
+#> 6    rs657801   1 111736389  T  C 0.315  0.0090 0.0015  1.88e-09     6 TRUE
 ```
 
  - Loci are numbered. Variants within a locus (i.e., significant below the `p_threshold` and less than `n_bases` from last significant variant).
@@ -109,22 +109,22 @@ gwas_loci = get_loci(gwas_example, ld_clump=TRUE)
 #> N independent variants (LD R2 threshold 0.01) = 153
 
 head(gwas_loci)
-#>               SNP CHR        BP   A1 A2   MAF    BETA      SE        P locus  lead lead_dist lead_ld
-#> 57882  rs12046439   1 107536799    T  C 0.248 0.00997 0.00170 5.01e-09     1 FALSE     FALSE   FALSE
-#> 57900 rs143849791   1 107537916 CATG  C 0.325 0.01283 0.00164 5.85e-15     1 FALSE     FALSE   FALSE
-#> 57922 rs113329442   1 107539252    A  G 0.330 0.01109 0.00149 1.27e-13     1 FALSE     FALSE   FALSE
-#> 57987   rs3861909   1 107544176    G  A 0.327 0.01187 0.00150 3.52e-15     1 FALSE     FALSE   FALSE
-#> 58025  rs17496332   1 107546375    A  G 0.331 0.01110 0.00148 8.70e-14     1 FALSE     FALSE   FALSE
-#> 58091   rs2878349   1 107549245    G  A 0.327 0.01182 0.00149 2.33e-15     1 FALSE     FALSE   FALSE
+#>               SNP CHR        BP   A1 A2   MAF   BETA     SE        P locus  lead lead_dist lead_ld
+#> 57882  rs12046439   1 107536799    T  C 0.248 0.0099 0.0017 5.01e-09     1 FALSE     FALSE   FALSE
+#> 57900 rs143849791   1 107537916 CATG  C 0.325 0.0128 0.0016 5.85e-15     1 FALSE     FALSE   FALSE
+#> 57922 rs113329442   1 107539252    A  G 0.330 0.0110 0.0014 1.27e-13     1 FALSE     FALSE   FALSE
+#> 57987   rs3861909   1 107544176    G  A 0.327 0.0118 0.0015 3.52e-15     1 FALSE     FALSE   FALSE
+#> 58025  rs17496332   1 107546375    A  G 0.331 0.0111 0.0014 8.70e-14     1 FALSE     FALSE   FALSE
+#> 58091   rs2878349   1 107549245    G  A 0.327 0.0118 0.0014 2.33e-15     1 FALSE     FALSE   FALSE
 
 gwas_loci |> dplyr::filter(lead==TRUE) |> head()
-#>           SNP CHR        BP A1 A2   MAF     BETA      SE        P locus lead lead_dist lead_ld
-#> 1 rs111232683   1 107566149  G  C 0.343  0.01352 0.00161 5.43e-17     1 TRUE      TRUE    TRUE
-#> 2 rs114254196   1 108635400  C  T 0.008 -0.04481 0.00818 4.38e-08     2 TRUE      TRUE    TRUE
-#> 3 rs140300970   1 109020060  A  T 0.022 -0.02782 0.00496 2.13e-08     3 TRUE     FALSE    TRUE
-#> 4 rs148503795   1 109166178  C  G 0.010 -0.04232 0.00709 2.47e-09     3 TRUE     FALSE    TRUE
-#> 5  rs74896173   1 109167705  T  C 0.009 -0.04297 0.00766 2.08e-08     3 TRUE     FALSE    TRUE
-#> 6 rs111751551   1 109242056  G  A 0.010 -0.05055 0.00697 4.32e-13     3 TRUE     FALSE    TRUE
+#>           SNP CHR        BP A1 A2   MAF    BETA     SE        P locus lead lead_dist lead_ld
+#> 1 rs111232683   1 107566149  G  C 0.343  0.0135 0.0016 5.43e-17     1 TRUE      TRUE    TRUE
+#> 2 rs114254196   1 108635400  C  T 0.008 -0.0448 0.0081 4.38e-08     2 TRUE      TRUE    TRUE
+#> 3 rs140300970   1 109020060  A  T 0.022 -0.0278 0.0049 2.13e-08     3 TRUE     FALSE    TRUE
+#> 4 rs148503795   1 109166178  C  G 0.010 -0.0423 0.0070 2.47e-09     3 TRUE     FALSE    TRUE
+#> 5  rs74896173   1 109167705  T  C 0.009 -0.0429 0.0076 2.08e-08     3 TRUE     FALSE    TRUE
+#> 6 rs111751551   1 109242056  G  A 0.010 -0.0505 0.0069 4.32e-13     3 TRUE     FALSE    TRUE
 ```
 
 
@@ -149,22 +149,22 @@ gwas_loci = get_nearest_gene(gwas_loci, build=37)
 #> (Removed 1 duplicated or missing variant IDs/positions)
 
 head(gwas_loci)
-#>           SNP CHR        BP   A1 A2   MAF    BETA      SE        P locus  lead lead_dist lead_ld  gene  dist
-#> 1  rs12046439   1 107536799    T  C 0.248 0.00997 0.00170 5.01e-09     1 FALSE     FALSE   FALSE PRMT6 62468
-#> 2 rs143849791   1 107537916 CATG  C 0.325 0.01283 0.00164 5.85e-15     1 FALSE     FALSE   FALSE PRMT6 61351
-#> 3 rs113329442   1 107539252    A  G 0.330 0.01109 0.00149 1.27e-13     1 FALSE     FALSE   FALSE PRMT6 60015
-#> 4   rs3861909   1 107544176    G  A 0.327 0.01187 0.00150 3.52e-15     1 FALSE     FALSE   FALSE PRMT6 55091
-#> 5  rs17496332   1 107546375    A  G 0.331 0.01110 0.00148 8.70e-14     1 FALSE     FALSE   FALSE PRMT6 52892
-#> 6   rs2878349   1 107549245    G  A 0.327 0.01182 0.00149 2.33e-15     1 FALSE     FALSE   FALSE PRMT6 50022
+#>           SNP CHR        BP   A1 A2   MAF   BETA     SE        P locus  lead  gene  dist
+#> 1  rs12046439   1 107536799    T  C 0.248 0.0099 0.0017 5.01e-09     1 FALSE PRMT6 62468
+#> 2 rs143849791   1 107537916 CATG  C 0.325 0.0128 0.0016 5.85e-15     1 FALSE PRMT6 61351
+#> 3 rs113329442   1 107539252    A  G 0.330 0.0110 0.0014 1.27e-13     1 FALSE PRMT6 60015
+#> 4   rs3861909   1 107544176    G  A 0.327 0.0118 0.0015 3.52e-15     1 FALSE PRMT6 55091
+#> 5  rs17496332   1 107546375    A  G 0.331 0.0111 0.0014 8.70e-14     1 FALSE PRMT6 52892
+#> 6   rs2878349   1 107549245    G  A 0.327 0.0118 0.0014 2.33e-15     1 FALSE PRMT6 50022
 
 gwas_loci |> dplyr::filter(lead==TRUE) |> head()
-#>           SNP CHR        BP A1 A2   MAF     BETA      SE        P locus lead lead_dist lead_ld     gene   dist
-#> 1 rs111232683   1 107566149  G  C 0.343  0.01352 0.00161 5.43e-17     1 TRUE      TRUE    TRUE    PRMT6  33118
-#> 2 rs114254196   1 108635400  C  T 0.008 -0.04481 0.00818 4.38e-08     2 TRUE      TRUE    TRUE SLC25A24  41258
-#> 3 rs140300970   1 109020060  A  T 0.022 -0.02782 0.00496 2.13e-08     3 TRUE     FALSE    TRUE    NBPF6   6436
-#> 4 rs148503795   1 109166178  C  G 0.010 -0.04232 0.00709 2.47e-09     3 TRUE     FALSE    TRUE  FAM102B -63467
-#> 5  rs74896173   1 109167705  T  C 0.009 -0.04297 0.00766 2.08e-08     3 TRUE     FALSE    TRUE  FAM102B -64994
-#> 6 rs111751551   1 109242056  G  A 0.010 -0.05055 0.00697 4.32e-13     3 TRUE     FALSE    TRUE  PRPF38B  -7111
+#>           SNP CHR        BP A1 A2   MAF    BETA     SE        P locus lead     gene   dist
+#> 1 rs111232683   1 107566149  G  C 0.343  0.0135 0.0016 5.43e-17     1 TRUE    PRMT6  33118
+#> 2 rs114254196   1 108635400  C  T 0.008 -0.0448 0.0081 4.38e-08     2 TRUE SLC25A24  41258
+#> 3 rs140300970   1 109020060  A  T 0.022 -0.0278 0.0049 2.13e-08     3 TRUE    NBPF6   6436
+#> 4 rs148503795   1 109166178  C  G 0.010 -0.0423 0.0070 2.47e-09     3 TRUE  FAM102B -63467
+#> 5  rs74896173   1 109167705  T  C 0.009 -0.0429 0.0076 2.08e-08     3 TRUE  FAM102B -64994
+#> 6 rs111751551   1 109242056  G  A 0.010 -0.0505 0.0069 4.32e-13     3 TRUE  PRPF38B  -7111
 ```
  - If `dist` is positive, the variant is intergenic, and this is the distance to the closest gene.
  - If `dist` is negative, the variant is within a gene, and this is the distance to the start of the gene.
