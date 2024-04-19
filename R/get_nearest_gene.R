@@ -113,7 +113,7 @@ get_nearest_gene = function(variants,
 	# merge original variants file with genes 
 	variants = variants |> dplyr::mutate(ID=!! rlang::sym(snp_col))
 	variants = dplyr::left_join(variants, map2, by=c("ID"="id"))
-	variants = variants |> dplyr::select(-ID)
+	if (snp_col != "ID")  variants = variants |> dplyr::select(-ID)
 	
 	# return 
 	return(variants)
