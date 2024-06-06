@@ -1,3 +1,11 @@
+# gwasRtools 0.1.6.9000 (6 June 2024)
+
+### Changes
+* Change URL to reflect my GitHub username change from `lukepilling` to `lcpilling` to be more consistent between different logins, websites, and social media
+ - https://lcpilling.github.io/gwasRtools
+ - https://github.com/lcpilling/gwasRtools
+
+
 # gwasRtools 0.1.6 (20 April 2024)
 
 * `get_loci()` -- update errors and use p-value if provided

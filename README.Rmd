@@ -12,14 +12,14 @@ knitr::opts_chunk$set(
 set.seed(1234)
 ```
 
-<img align="right" src="https://raw.githubusercontent.com/lukepilling/gwasRtools/master/images/gwasRtools.png" width="200" />
+<img align="right" src="man/figures/gwasRtools.png" width="200" />
 
 # gwasRtools
 Some useful R functions for processing GWAS output
 
 <!-- badges: start -->
-[![](https://img.shields.io/badge/version-0.1.3-informational.svg)](https://github.com/lukepilling/gwasRtools)
-[![](https://img.shields.io/github/last-commit/lukepilling/gwasRtools.svg)](https://github.com/lukepilling/gwasRtools/commits/master)
+[![](https://img.shields.io/badge/version-0.1.3-informational.svg)](https://github.com/lcpilling/gwasRtools)
+[![](https://img.shields.io/github/last-commit/lcpilling/gwasRtools.svg)](https://github.com/lcpilling/gwasRtools/commits/master)
 [![](https://img.shields.io/badge/lifecycle-experimental-orange)](https://www.tidyverse.org/lifecycle/#experimental)
 [![DOI](https://zenodo.org/badge/655790727.svg)](https://zenodo.org/badge/latestdoi/655790727)
 <!-- badges: end -->

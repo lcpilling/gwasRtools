@@ -351,6 +351,9 @@ get_loci = function(gwas,
 		cat(paste0("N loci = ", n_loci, "\n"))
 		if (ld_clump) cat(paste0("N independent variants (LD R2 threshold ", ld_clump_r2, ") = ", nrow(gwas_loci[gwas_loci$lead==TRUE,]), "\n"))
 
+	}  else  {
+		cat(paste0("N variants = ", nrow(gwas), "\n"))
+		cat("No variants passed the significance threshold\n")
 	}
 	
 	######################################################
