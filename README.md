@@ -20,17 +20,10 @@ Some useful R functions for processing GWAS output
 To install the development version from GitHub use the `remotes` package:
 
 ```r
-remotes::install_github("lukepilling/gwasRtools")
-```
+remotes::install_github("lcpilling/gwasRtools")
 
-The development version may not "work." Install a "release" version if needed. 
-
-```r
-# To install the latest release, use:
-remotes::install_github("lukepilling/gwasRtools@*release")
-
-# To install a specific version (see tags), use:
-remotes::install_github("lukepilling/gwasRtools@v0.1.3")
+remotes::install_github("lcpilling/gwasRtools@*release") # To install the latest release
+remotes::install_github("lcpilling/gwasRtools@v0.1.3")   # To install a specific version (see tags)
 ```
 
 
