@@ -11,7 +11,7 @@
 #' @name get_nearest_gene
 #'
 #' @param variants A data.frame. Contains the variants (e.g., in summary statistics).
-#' @param detect_headers Logical. Default=TRUE. Search input headers to see if BOLT-LMM, SAIGE, or REGENIE input (user therefore doesn't need to provide). 
+#' @param detect_headers Logical. Default=TRUE. Search input headers to see if BOLT-LMM, SAIGE, REGENIE, or GWAS CATALOG input (user therefore doesn't need to provide). 
 #' @param snp_col A string. Default="SNP". The RSID/variantID column name.
 #' @param chr_col A string. Default="CHR". The chromosome column name.
 #' @param pos_col A string. Default="BP". The base pair/position column name.
@@ -59,6 +59,12 @@ get_nearest_gene = function(variants,
 			snp_col  = "ID"
 			chr_col  = "CHROM"
 			pos_col  = "GENPOS"
+		}
+		if ("base_pair_location" %in% col_names & "chromosome" %in% col_names & "rs_id" %in% col_names)  {
+			cat("Detected GWAS CATALOG input. Using default headers. Disable with `detect_headers=FALSE`\n\n")
+			snp_col  = "rs_id"
+			chr_col  = "chromosome"
+			pos_col  = "base_pair_location"
 		}
 	}
 	

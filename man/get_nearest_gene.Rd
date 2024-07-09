@@ -17,7 +17,7 @@ get_nearest_gene(
 \arguments{
 \item{variants}{A data.frame. Contains the variants (e.g., in summary statistics).}
 
-\item{detect_headers}{Logical. Default=TRUE. Search input headers to see if BOLT-LMM, SAIGE, or REGENIE input (user therefore doesn't need to provide).}
+\item{detect_headers}{Logical. Default=TRUE. Search input headers to see if BOLT-LMM, SAIGE, REGENIE, or GWAS CATALOG input (user therefore doesn't need to provide).}
 
 \item{snp_col}{A string. Default="SNP". The RSID/variantID column name.}
 

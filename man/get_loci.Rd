@@ -36,7 +36,7 @@ get_loci(
 \arguments{
 \item{gwas}{A data.frame. Contains the GWAS summary statistics.}
 
-\item{detect_headers}{Logical. Default=TRUE. Search input headers to see if BOLT-LMM, SAIGE, or REGENIE input (user therefore doesn't need to provide). If BOLT-LMM then automatically use p-value instead of SE.}
+\item{detect_headers}{Logical. Default=TRUE. Search input headers to see if BOLT-LMM, SAIGE, REGENIE, or GWAS CATALOG input (user therefore doesn't need to provide). If BOLT-LMM then automatically use p-value instead of SE.}
 
 \item{snp_col}{A string. Default="SNP". The RSID/variantID column name.}
 

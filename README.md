@@ -4,7 +4,7 @@
 Some useful R functions for processing GWAS output
 
 <!-- badges: start -->
-[![](https://img.shields.io/badge/version-0.1.6.9000-informational.svg)](https://github.com/lcpilling/gwasRtools)
+[![](https://img.shields.io/badge/version-0.1.7-informational.svg)](https://github.com/lcpilling/gwasRtools)
 [![](https://img.shields.io/github/last-commit/lcpilling/gwasRtools.svg)](https://github.com/lcpilling/gwasRtools/commits/master)
 [![](https://img.shields.io/badge/lifecycle-experimental-orange)](https://www.tidyverse.org/lifecycle/#experimental)
 [![DOI](https://zenodo.org/badge/655790727.svg)](https://zenodo.org/badge/latestdoi/655790727)

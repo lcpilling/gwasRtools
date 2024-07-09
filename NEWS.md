@@ -1,4 +1,7 @@
-# gwasRtools 0.1.6.9000 (6 June 2024)
+# gwasRtools 0.1.7 (9 July 2024)
+
+### Updates
+* `get_loci()` and `get_nearest_gene()` detect GWAS CATALOG input automatically. Can be disabled with `detect_headers=FALSE`
 
 ### Changes
 * Change URL to reflect my GitHub username change from `lukepilling` to `lcpilling` to be more consistent between different logins, websites, and social media
